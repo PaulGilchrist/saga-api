@@ -4,6 +4,7 @@ using API.Models;
 using API.Services;
 using Azure.Monitor.OpenTelemetry.Exporter;
 using Microsoft.AspNetCore.OData;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.OpenApi.Models;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
@@ -40,21 +41,29 @@ builder.Services.AddOpenTelemetryTracing(b => {
             break;
     }
 });
+var healthCheckBuilder = builder.Services.AddHealthChecks();
 // Example showing support for multiple messaging platforms
 switch(applicationSettings.QueueType) {
     case "AzureServiceBus":
         builder.Services.AddSingleton<IMessageService,MessageServiceAzureServiceBus>();
+        healthCheckBuilder.AddAzureServiceBusTopic(applicationSettings.QueueConnectionString, applicationSettings.QueueName, null, Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Unhealthy);
+        break;
+    case "AzureEventGrid":
+        builder.Services.AddSingleton<IMessageService,MessageServiceAzureEventGrid>();
         break;
     case "Dapr":
         builder.Services.AddSingleton<IMessageService,MessageServiceDapr>();
         break;
     case "RabbitMQ":
         builder.Services.AddSingleton<IMessageService,MessageServiceRabbitMQ>();
+        var uri = new Uri("amqp://guest:guest@" + applicationSettings.QueueConnectionString + ":5672");
+        healthCheckBuilder.AddRabbitMQ(uri, null, null, Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Unhealthy);
         break;
     default: // None
         builder.Services.AddSingleton<IMessageService,MessageServiceNone>();
         break;
 }
+healthCheckBuilder.AddMongoDb(applicationSettings.DatabaseConnectionString, applicationSettings.DatabaseName, null, Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Unhealthy);
 // Add services to the container.
 // CORS support
 builder.Services.AddCors(options => {
@@ -69,6 +78,8 @@ builder.Services.AddCors(options => {
 builder.Services.AddSingleton<ApplicationSettings>();
 builder.Services.AddSingleton<ContactService>();
 builder.Services.AddControllers().AddOData(options => options.Count().Expand().Filter().OrderBy().Select().SetMaxTop(1000));
+
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options => {
@@ -110,4 +121,5 @@ app.UseSwaggerUI(options => {
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
+app.MapHealthChecks("/health").AllowAnonymous();
 app.Run();

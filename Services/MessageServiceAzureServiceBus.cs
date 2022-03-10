@@ -3,13 +3,6 @@ using System.Transactions;
 using API.Models;
 using Azure.Messaging.ServiceBus;
 
-/*
- * Azure Service Bus Transactions
- * Requires either Standard or Premium tiers (not Basic)
- * https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-transactions
- * https://github.com/Azure/azure-sdk-for-net/blob/main/sdk/servicebus/Azure.Messaging.ServiceBus/samples/Sample06_Transactions.md#transactions-across-entities
- */
-
 namespace API.Services {
     // Example for using multiple different backend message services through a common interface
     public class MessageServiceAzureServiceBus: IMessageService, IDisposable {

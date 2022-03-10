@@ -19,8 +19,10 @@ namespace API.Models {
             DatabaseName = Environment.GetEnvironmentVariable("DatabaseName");
             QueueConnectionString = Environment.GetEnvironmentVariable("QueueConnectionString"); // Same as HostName for QueueType="RabbitMQ"
             QueueName = Environment.GetEnvironmentVariable("QueueName");
-            QueueType = Environment.GetEnvironmentVariable("QueueType"); // Valid options are "AzureServiceBus", "Dapr", "None", or "RabbitMQ" (Default: "None")
-            TelemetryConnectionString = Environment.GetEnvironmentVariable("TelemetryConnectionString"); // Blank if TelemetryType="Console"
+            QueueType = Environment.GetEnvironmentVariable("QueueType"); // Valid options are "AzureEventGrid", "AzureServiceBus", "Dapr", "None", or "RabbitMQ" (Default: "None")
+                // If QueueType=AzureEventGrid then QueueName will be the topic's full URL, and QueueConnectionString will be the AzureKeyCredential
+                // If QueueType=RabbitMQ then QueueConnectionString will be the HostName
+           TelemetryConnectionString = Environment.GetEnvironmentVariable("TelemetryConnectionString"); // Blank if TelemetryType="Console"
             TelemetryType = Environment.GetEnvironmentVariable("TelemetryType"); // Valid options are "AppInsights", "Console", or "Zipkin" (Default: "Console")
 #pragma warning restore CS8601
         }

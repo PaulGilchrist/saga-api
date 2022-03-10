@@ -7,9 +7,13 @@ using Newtonsoft.Json;
 
 #pragma warning disable S125 // Sections of code should not be commented out
 /*
-*  Example on how to get a string[] of roles from the user's token 
-*      var roles = User.Claims.Where(c => c.Type == ClaimsIdentity.DefaultRoleClaimType).FirstOrDefault().Value.Split(',');
+ * It is not recommended to support bulk updates on this controller due to SAGA compensation orchestration
+ *      Performance should still be improved due to elimination of SQL triggers, dual writes, and polling reads from event processors
+ *  
+ * Example on how to get a string[] of roles from the user's token 
+ *      var roles = User.Claims.Where(c => c.Type == ClaimsIdentity.DefaultRoleClaimType).FirstOrDefault().Value.Split(',');
 */
+#pragma warning restore S125 // Sections of code should not be commented out
 
 namespace API.Controllers {
     /// <summary>
@@ -31,10 +35,14 @@ namespace API.Controllers {
         /// <summary>Query contacts</summary>
         /// <returns>A list of contacts</returns>
         /// <response code="200">The contacts were successfully retrieved</response>
+        /// <response code="401">Authentication required</response>
+        /// <response code="403">Access denied due to inadaquate claim roles</response>
         [HttpGet]
         [Route("contacts")]
         [Produces("application/json")]
         [ProducesResponseType(typeof(IEnumerable<Contact>),200)] // Ok
+        [ProducesResponseType(typeof(void),401)] // Unauthorized
+        [ProducesResponseType(typeof(ForbiddenException),403)] // Forbidden - Missing required claim roles
         //[Authorize]
         [EnableQuery]
         public IActionResult Get() {
@@ -58,11 +66,15 @@ namespace API.Controllers {
         /// <param name="id">The contact id</param>
         /// <returns>A single contact</returns>
         /// <response code="200">The contact was successfully retrieved</response>
+        /// <response code="401">Authentication required</response>
+        /// <response code="403">Access denied due to inadaquate claim roles</response>
         /// <response code="404">The contact was not found</response>
         [HttpGet]
         [Route("contacts/{id}")]
         [Produces("application/json")]
         [ProducesResponseType(typeof(Contact),200)] // Ok
+        [ProducesResponseType(typeof(void),401)] // Unauthorized
+        [ProducesResponseType(typeof(ForbiddenException),403)] // Forbidden - Missing required claim roles
         [ProducesResponseType(typeof(void),404)] // Not Found
         [EnableQuery]
         public async Task<IActionResult> GetById([FromRoute] string id) {
@@ -80,7 +92,7 @@ namespace API.Controllers {
 
         /// <summary>Create a new contact</summary>
         /// <param name="contact">A full contact object</param>
-        /// <returns>A new contact or list of products</returns>
+        /// <returns>A new contact</returns>
         /// <response code="201">The contact was successfully created</response>
         /// <response code="400">The contact is invalid</response>
         /// <response code="401">Authentication required</response>
@@ -111,10 +123,9 @@ namespace API.Controllers {
             }
         }
 
-        /// <summary>Edit contact</summary>
+        /// <summary>Edit contact using partial contact object</summary>
         /// <param name="id">The contact id</param>
         /// <param name="contactDelta">A partial JSON representation of the contact including only the properites to change.</param>
-        /// <returns>An updated contact</returns>
         /// <response code="204">The contact was successfully updated</response>
         /// <response code="400">The contact is invalid</response>
         /// <response code="401">Authentication required</response>
@@ -126,12 +137,13 @@ namespace API.Controllers {
         [ProducesResponseType(typeof(void),204)] // No Content 
         [ProducesResponseType(typeof(string),400)] // Bad Request (should be ModelStateDictionary)
         [ProducesResponseType(typeof(void),401)] // Unauthorized - Product not authenticated
-        [ProducesResponseType(typeof(ForbiddenException),403)] // Forbidden - Product does not have required claim roles
+        [ProducesResponseType(typeof(ForbiddenException),403)] // Forbidden - Missing required claim roles
         [ProducesResponseType(typeof(void),404)] // Not Found
         //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme + ",BasicAuthentication", Roles = "Admin")]
         public async Task<IActionResult> Patch([FromRoute] string id,[FromBody] dynamic contactDelta) {
             // [FromBody] types other than dynamic will be null as they will be missing properties and not match the static type definition
-            Contact foundContact, updatedContact;
+            Contact? foundContact = null;
+            Contact? updatedContact = null;
             try {
                 foundContact = await _contactService.Get(id);
                 if(foundContact == null) {
@@ -158,10 +170,9 @@ namespace API.Controllers {
             }
         }
 
-        /// <summary>Edit contact</summary>
+        /// <summary>Edit contact using full contact object</summary>
         /// <param name="id">The contact id</param>
-        /// <param name="contact">A updated contact object.</param>
-        /// <returns>An updated contact</returns>
+        /// <param name="contact">A full contact object</param>
         /// <response code="204">The contact was successfully updated</response>
         /// <response code="400">The contact is invalid</response>
         /// <response code="401">Authentication required</response>
@@ -173,11 +184,11 @@ namespace API.Controllers {
         [ProducesResponseType(typeof(void),204)] // No Content
         [ProducesResponseType(typeof(string),400)] // Bad Request (should be ModelStateDictionary)
         [ProducesResponseType(typeof(void),401)] // Unauthorized - Product not authenticated
-        [ProducesResponseType(typeof(ForbiddenException),403)] // Forbidden - Product does not have required claim roles
+        [ProducesResponseType(typeof(ForbiddenException),403)] // Forbidden - Missing required claim roles
         [ProducesResponseType(typeof(void),404)] // Not Found
         //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme + ",BasicAuthentication", Roles = "Admin")]
         public async Task<IActionResult> Put([FromRoute] string id,[FromBody] Contact contact) {
-            Contact foundContact;
+            Contact? foundContact = null;
             try {
                 foundContact = await _contactService.Get(id);
                 if(foundContact == null) {
@@ -199,9 +210,9 @@ namespace API.Controllers {
                 Activity.Current?.AddTag("exception",ex);
                 return StatusCode(500,ex.Message);
             }
-       }
+        }
 
-        /// <summary>Delete the given contact</summary>
+        /// <summary>Delete contact</summary>
         /// <param name="id">The contact id</param>
         /// <response code="204">The contact was successfully deleted</response>
         /// <response code="401">Authentication required</response>
@@ -212,8 +223,9 @@ namespace API.Controllers {
         [Produces("application/json")]
         [ProducesResponseType(typeof(void),204)] // No Content
         [ProducesResponseType(typeof(void),401)] // Unauthorized
+        [ProducesResponseType(typeof(ForbiddenException),403)] // Forbidden - Missing required claim roles
         [ProducesResponseType(typeof(void),404)] // Not Found
-        public async Task<IActionResult> Delete([FromRoute] string id) {
+        public async Task<IActionResult> DeleteById([FromRoute] string id) {
             Contact foundContact;
             try {
                 foundContact = await _contactService.Get(id);
