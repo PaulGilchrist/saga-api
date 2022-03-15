@@ -4,7 +4,6 @@ using API.Models;
 using API.Services;
 using Azure.Monitor.OpenTelemetry.Exporter;
 using Microsoft.AspNetCore.OData;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.OpenApi.Models;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;

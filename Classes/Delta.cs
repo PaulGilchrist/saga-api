@@ -2,7 +2,7 @@
 
 namespace API.Classes {
     public static class Delta {
-        public static T Patch<T>(dynamic? deltaObject,T fullObject) {
+        public static T? Patch<T>(dynamic? deltaObject,T fullObject) {
             var newObject = JsonSerializer.Deserialize<T>(JsonSerializer.Serialize(fullObject));
             // Update fullObject with any matching properties found in deltaObject
 #pragma warning disable CS8602
