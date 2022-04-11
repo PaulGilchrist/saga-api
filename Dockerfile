@@ -3,7 +3,7 @@
 # docker push paulgilchrist/mongodb-api
 # Don't let GitHub Action build this project on AMD64 if you want to run it on ARM64.  Build and publish it yourself
 
-FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
+FROM --platform=linux/amd64 mcr.microsoft.com/dotnet/aspnet:6.0 AS base
 WORKDIR /app
 EXPOSE 80
 EXPOSE 443
