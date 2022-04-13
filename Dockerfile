@@ -1,11 +1,9 @@
-#See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
-# docker build --rm -f "Dockerfile" -t paulgilchrist/mongodb-api:arm64 .
+# docker build --rm -f "Dockerfile" --platform linux/arm64 -t paulgilchrist/mongodb-api:arm64 .
 # docker push paulgilchrist/mongodb-api:arm64
 # docker build --rm -f "Dockerfile" --platform linux/amd64 -t paulgilchrist/mongodb-api:amd64 .
 # docker push paulgilchrist/mongodb-api:amd64
 # docker manifest create paulgilchrist/mongodb-api:latest paulgilchrist/mongodb-api:arm64 paulgilchrist/mongodb-api:amd64
 # docker manifest push paulgilchrist/mongodb-api:latest
-
 FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
 WORKDIR /app
 EXPOSE 80
