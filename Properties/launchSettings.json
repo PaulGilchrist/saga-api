@@ -9,23 +9,6 @@
     }
   },
   "profiles": {
-    "IIS Express": {
-      "commandName": "IISExpress",
-      "launchBrowser": true,
-      "launchUrl": "swagger",
-        "environmentVariables": {
-            "ASPNETCORE_ENVIRONMENT": "Development",
-            "BasePath": "/",
-            "DatabaseConnectionString": "mongodb://localhost:27017",
-            "DatabaseName": "mongotest",
-            "ContactsCollectionName": "contacts",
-            "QueueConnectionString": "localhost",
-            "QueueName": "api",
-            "QueueType": "RabbitMQ",
-            "TelemetryConnectionString": "",
-            "TelemetryType": "Console"
-        }
-    },
     "API": {
         "commandName": "Project",
         "launchBrowser": true,
@@ -38,8 +21,8 @@
             "DatabaseName": "mongotest",
             "ContactsCollectionName": "contacts",
             "QueueConnectionString": "localhost",
-            "QueueName": "api",
-            "QueueType": "RabbitMQ",
+            "QueueName": "contacts",
+            "QueueType": "Dapr",
             "TelemetryConnectionString": "",
             "TelemetryType": "Console"
         }

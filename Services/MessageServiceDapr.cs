@@ -12,7 +12,7 @@ namespace API.Services {
         }
 
         public void Send(string message) {
-            var url = "http://localhost:3500/v1.0/publish/pubsub/" + _applicationSettings.QueueName;
+            var url = "http://localhost:3500/v1.0/publish/dapr-pubsub-rabbitmq/" + _applicationSettings.QueueName;
             using var client = new HttpClient();
             var data = new StringContent(message,Encoding.UTF8,"application/json");
             var result = client.PostAsync(url,data).GetAwaiter().GetResult();
