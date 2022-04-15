@@ -24,12 +24,12 @@
     <PackageReference Include="MongoDB.Driver" Version="2.15.0" />
     <PackageReference Include="RabbitMQ.Client" Version="6.2.4" />
     <PackageReference Include="Azure.Messaging.ServiceBus" Version="7.7.0" />
-    <PackageReference Include="OpenTelemetry" Version="1.2.0-rc5" />
+    <PackageReference Include="OpenTelemetry" Version="1.2.0" />
     <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.0.0-rc9.2" />
     <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.0.0-rc9.2" />
     <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.0.0-rc9.2" />
-    <PackageReference Include="OpenTelemetry.Exporter.Console" Version="1.2.0-rc5" />
-    <PackageReference Include="OpenTelemetry.Exporter.Zipkin" Version="1.2.0-rc5" />
+    <PackageReference Include="OpenTelemetry.Exporter.Console" Version="1.2.0" />
+    <PackageReference Include="OpenTelemetry.Exporter.Zipkin" Version="1.2.0" />
     <PackageReference Include="Azure.Monitor.OpenTelemetry.Exporter" Version="1.0.0-beta.3" />
     <PackageReference Include="Azure.Messaging.EventGrid" Version="4.10.0" />
     <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks" Version="6.0.4" />
