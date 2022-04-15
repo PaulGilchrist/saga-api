@@ -1,4 +1,8 @@
-﻿using System.Diagnostics;
+﻿/*
+ * Make sure Dapr is running before debugging this class
+ * dapr run --app-id contacts-api --app-port 3000 --dapr-http-port 3500
+*/
+using System.Diagnostics;
 using System.Text;
 using API.Models;
 
@@ -12,7 +16,7 @@ namespace API.Services {
         }
 
         public void Send(string message) {
-            var url = "http://localhost:3500/v1.0/publish/dapr-pubsub-rabbitmq/" + _applicationSettings.QueueName;
+            var url = "http://localhost:3500/v1.0/publish/dapr-pubsub-contacts/" + _applicationSettings.QueueName;
             using var client = new HttpClient();
             var data = new StringContent(message,Encoding.UTF8,"application/json");
             var result = client.PostAsync(url,data).GetAwaiter().GetResult();
