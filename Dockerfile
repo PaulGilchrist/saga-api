@@ -26,5 +26,3 @@ WORKDIR /app
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "contacts-api.dll"]
 
-# docker run -d -p 8081:80 paulgilchrist/mongodb-api
-# docker rm -f <containerID>

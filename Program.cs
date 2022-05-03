@@ -1,13 +1,54 @@
 ﻿using System.Reflection;
+using System.Text;
+using System.Text.Json;
 using API.Classes;
 using API.Models;
 using API.Services;
 using Azure.Monitor.OpenTelemetry.Exporter;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.OData;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.OpenApi.Models;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using Swashbuckle.AspNetCore.SwaggerUI;
+
+static Task WriteReadinessResponse(HttpContext context, HealthReport result) {
+    context.Response.ContentType = "application/json; charset=utf-8";
+    var options = new JsonWriterOptions
+    {
+        Indented = true
+    };
+    using (var stream = new MemoryStream())
+    {
+        using (var writer = new Utf8JsonWriter(stream, options))
+        {
+            writer.WriteStartObject();
+            writer.WriteString("status", result.Status.ToString());
+            writer.WriteStartObject("results");
+            foreach (var entry in result.Entries)
+            {
+                writer.WriteStartObject(entry.Key);
+                writer.WriteString("status", entry.Value.Status.ToString());
+                writer.WriteString("description", entry.Value.Description);
+                writer.WriteStartObject("data");
+                foreach (var item in entry.Value.Data)
+                {
+                    writer.WritePropertyName(item.Key);
+                    JsonSerializer.Serialize(
+                        writer, item.Value, item.Value?.GetType() ??
+                        typeof(object));
+                }
+                writer.WriteEndObject();
+                writer.WriteEndObject();
+            }
+            writer.WriteEndObject();
+            writer.WriteEndObject();
+        }
+        var json = Encoding.UTF8.GetString(stream.ToArray());
+        return context.Response.WriteAsync(json);
+    }
+}
 
 var builder = WebApplication.CreateBuilder(args);
 // Define some important OpenTelemetry constants and the activity source
@@ -120,5 +161,7 @@ app.UseSwaggerUI(options => {
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
-app.MapHealthChecks("/health").AllowAnonymous();
+app.MapHealthChecks("/health/readiness", new HealthCheckOptions() { ResponseWriter = WriteReadinessResponse }).AllowAnonymous();
+app.MapHealthChecks("/health/liveness", new HealthCheckOptions() { Predicate = (_) => false }).AllowAnonymous();
 app.Run();
+
