@@ -22,7 +22,7 @@
             "ContactsCollectionName": "contacts",
             "QueueConnectionString": "localhost",
             "QueueName": "contacts",
-            "QueueType": "RabbitMQ",
+            "QueueType": "Dapr",
             "TelemetryConnectionString": "",
             "TelemetryType": "Console"
         }
