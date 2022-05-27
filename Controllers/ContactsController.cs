@@ -55,7 +55,6 @@ namespace API.Controllers {
                    https://jira.mongodb.org/browse/CSHARP-1771
                    in meantime, remove them from query, then apply, then apply second LINQ re-applying select
                 */
-                _messageService.Send("contacts", "read", new Contact(), typeof(Contact));
                 return Ok(_contactService.Get());
             } catch(Exception ex) {
                 Activity.Current?.AddTag("exception",ex);
