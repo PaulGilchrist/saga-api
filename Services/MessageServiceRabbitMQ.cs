@@ -2,6 +2,8 @@
 using System.Text;
 using API.Models;
 using RabbitMQ.Client;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace API.Services {
     public class MessageServiceRabbitMQ: IMessageService, IDisposable {
@@ -27,11 +29,20 @@ namespace API.Services {
             _channel.QueueDeclare(queue: _applicationSettings.QueueName, durable: false, exclusive: false, autoDelete: false, arguments: null);
         }
 
-        public void Send(string message) {
-            var body = Encoding.UTF8.GetBytes(message);
-            _channel.BasicPublish(exchange: "", routingKey: _applicationSettings.QueueName, basicProperties: null, body: body);
+        public void Send(string type, string subject, object? jsonSerializableData, Type? dataSerializableType) {
+            // type examples: contact, email, phone, address, etc.
+            var cloudEvent = new Azure.Messaging.CloudEvent("contacts-api", type, jsonSerializableData, dataSerializableType);
+            cloudEvent.Subject = subject; // created, updated, deleted, etc.
+            cloudEvent.Id = new Guid().ToString();
+            cloudEvent.Time = DateTime.Now;
+            var json = JsonConvert.SerializeObject(cloudEvent, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
+            // cloudEvent.data is not converting properly to JSON but the original jsonSerializableData does
+            var dataJson = JsonConvert.SerializeObject(jsonSerializableData, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
+            json = json.Replace("\"data\":{}", $"\"data\":{dataJson}");
+            var body = Encoding.UTF8.GetBytes(json);
+            _channel.BasicPublish(exchange: "contacts", routingKey: _applicationSettings.QueueName, basicProperties: null, body: body);
             var activityTagsCollection = new ActivityTagsCollection();
-            activityTagsCollection.Add("message",message);
+            activityTagsCollection.Add("message",json);
             Activity.Current?.AddEvent(new ActivityEvent("RabbitMQ.Message.Sent",default,activityTagsCollection));
         }
 

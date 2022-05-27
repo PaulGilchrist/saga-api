@@ -5,6 +5,7 @@
 # docker manifest rm paulgilchrist/mongodb-api:latest
 # docker manifest create paulgilchrist/mongodb-api:latest paulgilchrist/mongodb-api:arm64 paulgilchrist/mongodb-api:amd64
 # docker manifest push paulgilchrist/mongodb-api:latest
+# kubectl rollout restart deployment contacts-api -n demo
 FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
 WORKDIR /app
 EXPOSE 80

@@ -5,6 +5,8 @@
 using System.Diagnostics;
 using System.Text;
 using API.Models;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace API.Services {
     public class MessageServiceDapr: IMessageService {
@@ -15,13 +17,22 @@ namespace API.Services {
             _applicationSettings = applicationSettings;
         }
 
-        public void Send(string message) {
+        public void Send(string type, string subject, object? jsonSerializableData, Type? dataSerializableType) {
+            // type examples: contact, email, phone, address, etc.
+            var cloudEvent = new Azure.Messaging.CloudEvent("contacts-api", type, jsonSerializableData, dataSerializableType);
+            cloudEvent.Subject = subject; // created, updated, deleted, etc.
+            cloudEvent.Id = Guid.NewGuid().ToString();
+            cloudEvent.Time = DateTime.Now;
+            var json = JsonConvert.SerializeObject(cloudEvent, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
+            // cloudEvent.data is not converting properly to JSON but the original jsonSerializableData does
+            var dataJson = JsonConvert.SerializeObject(jsonSerializableData, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
+            json = json.Replace("\"data\":{}", $"\"data\":{dataJson}");
             var url = "http://localhost:3500/v1.0/publish/contacts-pubsub/" + _applicationSettings.QueueName;
             using var client = new HttpClient();
-            var data = new StringContent(message,Encoding.UTF8,"application/json");
-            var result = client.PostAsync(url,data).GetAwaiter().GetResult();
+            var message = new StringContent(json,Encoding.UTF8,"application/cloudevents+json");
+            var result = client.PostAsync(url,message).GetAwaiter().GetResult();
             var activityTagsCollection = new ActivityTagsCollection();
-            activityTagsCollection.Add("message",message);
+            activityTagsCollection.Add("message",json);
             Activity.Current?.AddEvent(new ActivityEvent("Dapr.Message.Sent",default,activityTagsCollection));
         }
 

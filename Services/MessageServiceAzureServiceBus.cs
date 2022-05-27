@@ -2,6 +2,8 @@
 using System.Transactions;
 using API.Models;
 using Azure.Messaging.ServiceBus;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace API.Services {
     // Example for using multiple different backend message services through a common interface
@@ -39,11 +41,20 @@ namespace API.Services {
             return message;
         }
 
-        public void Send(string message) {
+        public void Send(string type, string subject, object? jsonSerializableData, Type? dataSerializableType) {
+            // type examples: contact, email, phone, address, etc.
+            var cloudEvent = new Azure.Messaging.CloudEvent("contacts-api", type, jsonSerializableData, dataSerializableType);
+            cloudEvent.Subject = subject; // created, updated, deleted, etc.
+            cloudEvent.Id = new Guid().ToString();
+            cloudEvent.Time = DateTime.Now;
+            var json = JsonConvert.SerializeObject(cloudEvent, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
+            // cloudEvent.data is not converting properly to JSON but the original jsonSerializableData does
+            var dataJson = JsonConvert.SerializeObject(jsonSerializableData, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
+            json = json.Replace("\"data\":{}", $"\"data\":{dataJson}");
             // send the message
-            _sender.SendMessageAsync(new ServiceBusMessage(message)).GetAwaiter();
+            _sender.SendMessageAsync(new ServiceBusMessage(json)).GetAwaiter();
             var activityTagsCollection = new ActivityTagsCollection();
-            activityTagsCollection.Add("message",message);
+            activityTagsCollection.Add("message",json);
             Activity.Current?.AddEvent(new ActivityEvent("AzureServiceBus.Message.Sent",default,activityTagsCollection));
         }
 

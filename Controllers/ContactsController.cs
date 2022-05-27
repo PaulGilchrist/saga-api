@@ -55,6 +55,7 @@ namespace API.Controllers {
                    https://jira.mongodb.org/browse/CSHARP-1771
                    in meantime, remove them from query, then apply, then apply second LINQ re-applying select
                 */
+                _messageService.Send("contacts", "read", new Contact(), typeof(Contact));
                 return Ok(_contactService.Get());
             } catch(Exception ex) {
                 Activity.Current?.AddTag("exception",ex);
@@ -112,8 +113,7 @@ namespace API.Controllers {
                 return StatusCode(500,ex.Message);
             }
             try {
-                var message = JsonConvert.SerializeObject(new TraceMessage("POST","Contact",null,newContact));
-                _messageService.Send(message);
+                _messageService.Send("contacts", "created", newContact, typeof(Contact));
                 return Created("",newContact);
             } catch(Exception ex) {
                 // Compensation to rollback POST
@@ -158,8 +158,7 @@ namespace API.Controllers {
                 return StatusCode(500,ex.Message);
             }
             try {
-                var message = JsonConvert.SerializeObject(new TraceMessage("PATCH","Contact",id,updatedContact));
-                _messageService.Send(message);
+                _messageService.Send("contacts", "updated", updatedContact, typeof(Contact));
                 Activity.Current?.AddTag("value",updatedContact);
                 return NoContent();
             } catch(Exception ex) {
@@ -200,8 +199,7 @@ namespace API.Controllers {
                 return StatusCode(500,ex.Message);
             }
             try {
-                var message = JsonConvert.SerializeObject(new TraceMessage("PUT","Contact",id,contact));
-                _messageService.Send(message);
+                _messageService.Send("contacts", "updated", contact, typeof(Contact));
                 Activity.Current?.AddTag("value",contact);
                 return NoContent();
             } catch(Exception ex) {
@@ -238,8 +236,7 @@ namespace API.Controllers {
                 return StatusCode(500,ex.Message);
             }
             try {
-                var message = JsonConvert.SerializeObject(new TraceMessage("DELETE","Contact",id,null));
-                _messageService.Send(message);
+                _messageService.Send("contacts", "deleted", id, typeof(Contact));
                 return NoContent();
             } catch(Exception ex) {
                 // Compensation to rollback DELETE (will have a new ID unless database supports ID being passed in as part of create)
