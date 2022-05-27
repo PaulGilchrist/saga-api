@@ -235,7 +235,7 @@ namespace API.Controllers {
                 return StatusCode(500,ex.Message);
             }
             try {
-                _messageService.Send("contacts", "deleted", id, typeof(Contact));
+                _messageService.Send("contacts", "deleted", id, typeof(string));
                 return NoContent();
             } catch(Exception ex) {
                 // Compensation to rollback DELETE (will have a new ID unless database supports ID being passed in as part of create)
