@@ -11,10 +11,12 @@ using Newtonsoft.Json.Serialization;
 namespace API.Services {
     public class MessageServiceDapr: IMessageService {
         private readonly ApplicationSettings _applicationSettings;
+        private readonly HttpClient _httpClient;
         private bool disposedValue;
 
-        public MessageServiceDapr(ApplicationSettings applicationSettings) {
+        public MessageServiceDapr(ApplicationSettings applicationSettings, HttpClient httpClient) {
             _applicationSettings = applicationSettings;
+            _httpClient = httpClient;
         }
 
         public void Send(string type, string subject, object? jsonSerializableData, Type? dataSerializableType) {
@@ -28,9 +30,8 @@ namespace API.Services {
             var dataJson = JsonConvert.SerializeObject(jsonSerializableData, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
             json = json.Replace("\"data\":{}", $"\"data\":{dataJson}");
             var url = "http://localhost:3500/v1.0/publish/contacts-pubsub/" + _applicationSettings.QueueName;
-            using var client = new HttpClient();
             var message = new StringContent(json,Encoding.UTF8,"application/cloudevents+json");
-            var result = client.PostAsync(url,message).GetAwaiter().GetResult();
+            var result = _httpClient.PostAsync(url,message).GetAwaiter().GetResult();
             var activityTagsCollection = new ActivityTagsCollection();
             activityTagsCollection.Add("message",json);
             Activity.Current?.AddEvent(new ActivityEvent("Dapr.Message.Sent",default,activityTagsCollection));

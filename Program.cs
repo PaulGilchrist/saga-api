@@ -11,7 +11,23 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.OpenApi.Models;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
+using Polly;
+using Polly.Extensions.Http;
 using Swashbuckle.AspNetCore.SwaggerUI;
+
+
+static IAsyncPolicy<HttpResponseMessage> GetCircuitBreakerPolicy() {
+    return HttpPolicyExtensions
+        .HandleTransientHttpError()
+        .CircuitBreakerAsync(5, TimeSpan.FromSeconds(30));
+}
+
+static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy() {
+    return HttpPolicyExtensions
+        .HandleTransientHttpError()
+        .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
+        .WaitAndRetryAsync(6, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
+}
 
 static Task WriteReadinessResponse(HttpContext context, HealthReport result) {
     context.Response.ContentType = "application/json; charset=utf-8";
@@ -92,7 +108,10 @@ switch(applicationSettings.QueueType) {
         builder.Services.AddSingleton<IMessageService,MessageServiceAzureEventGrid>();
         break;
     case "Dapr":
-        builder.Services.AddSingleton<IMessageService,MessageServiceDapr>();
+        builder.Services.AddHttpClient<IMessageService, MessageServiceDapr>()
+            .SetHandlerLifetime(TimeSpan.FromMinutes(5))  //Set lifetime to five minutes
+            .AddPolicyHandler(GetRetryPolicy())
+            .AddPolicyHandler(GetCircuitBreakerPolicy());
         break;
     case "RabbitMQ":
         builder.Services.AddSingleton<IMessageService,MessageServiceRabbitMQ>();
