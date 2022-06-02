@@ -2,8 +2,6 @@
     "version": "0.2.0",
     "configurations": [
         {
-            // If using Dapr, start it manually with the following command
-            // dapr run --app-id contacts-api --app-port 80 --dapr-http-port 3500 --components-path ./dapr-components/local
             "name": "API",
             "type": "coreclr",
             "request": "launch",
@@ -26,11 +24,11 @@
             }
         },
         {
-            // Nust stop Dapr manually after stopping debugging or next debug start will fail to complete preLaunchTask
             "name": "API & Dapr",
             "type": "coreclr",
             "request": "launch",
-            "preLaunchTask": "dapr",
+            "preLaunchTask": "dapr-start",
+            "postDebugTask": "dapr-stop",
             // If you have changed target frameworks, make sure to update the program path.
             "program": "${workspaceFolder}/bin/Debug/net6.0/contacts-api.dll",
             "args": [],

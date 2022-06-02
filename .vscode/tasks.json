@@ -14,7 +14,7 @@
             "problemMatcher": "$msCompile"
         },
         {
-            "label": "dapr",
+            "label": "dapr-start",
             "command": "dapr",
             "type": "process",
             "args": [
@@ -46,6 +46,22 @@
                     "endsPattern": "."
                 },
             },
+        },
+        {
+            "label": "dapr-stop",
+            "command": "dapr",
+            "type": "process",
+            "args": [
+                "stop",
+                "--app-id",
+                "contacts-api"
+            ],
+            "presentation": {
+                "echo": true,
+                "reveal": "silent",
+                "close": true,
+                "focus": false
+            }
         },
         {
             "label": "publish",
