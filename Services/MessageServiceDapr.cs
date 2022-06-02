@@ -1,6 +1,6 @@
 ﻿/*
  * Make sure Dapr is running before debugging this class
- * dapr run --app-id contacts-api --app-port 80 --dapr-http-port 3500
+ * dapr run --app-id contacts-api --app-port 80 --dapr-http-port 3500 --components-path ./dapr-components/local
 */
 using System.Diagnostics;
 using System.Text;

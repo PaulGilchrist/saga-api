@@ -14,6 +14,26 @@
             "problemMatcher": "$msCompile"
         },
         {
+            "label": "dapr",
+            "command": "dapr",
+            "type": "shell",
+            "args": [
+                "run",
+                "--app-id",
+                "contacts-api",
+                "--app-port",
+                "80",
+                "--dapr-http-port",
+                "3500",
+                "--components-path",
+                "./dapr-components/local"
+            ],
+            "dependsOn": [
+                "build"
+            ],
+            "isBackground": true
+        },
+        {
             "label": "publish",
             "command": "dotnet",
             "type": "process",
