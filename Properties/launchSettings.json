@@ -20,9 +20,9 @@
             "DatabaseConnectionString": "mongodb://admin:mongodb-k8s-demo@localhost:27017",
             "DatabaseName": "mongotest",
             "ContactsCollectionName": "contacts",
-            "QueueConnectionString": "localhost",
-            "QueueName": "contacts",
-            "QueueType": "Dapr",
+            "QueueConnectionString": "",
+            "QueueName": "",
+            "QueueType": "None",
             "TelemetryConnectionString": "",
             "TelemetryType": "Console"
         }

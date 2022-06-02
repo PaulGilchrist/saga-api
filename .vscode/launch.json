@@ -22,7 +22,7 @@
                 "DatabaseName": "mongotest",
                 "ContactsCollectionName": "contacts",
                 "QueueConnectionString": "", // Not required for "QueueType": "None" or "Dapr"
-                "QueueName": "contacts",
+                "QueueName": "", // Not required for "QueueType": "None"
                 "QueueType": "None", // AzureServiceBus, AzureEventGrid, Dapr, RabbitMQ, or None
                 "TelemetryConnectionString": "",
                 "TelemetryType": "Console"
