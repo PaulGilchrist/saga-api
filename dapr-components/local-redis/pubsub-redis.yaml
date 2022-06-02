@@ -11,3 +11,5 @@ spec:
     value: localhost:6379
   - name: redisPassword
     value: ""
+scopes:
+- contacts-api

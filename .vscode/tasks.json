@@ -82,6 +82,40 @@
             },
         },
         {
+            "label": "dapr-start-servicebus",
+            "command": "dapr",
+            "type": "process",
+            "args": [
+                "run",
+                "--app-id",
+                "contacts-api",
+                "--app-port",
+                "80",
+                "--dapr-http-port",
+                "3500",
+                "--components-path",
+                "./dapr-components/local-servicebus"
+            ],
+            "dependsOn": [
+                "build"
+            ],
+            "isBackground": true,
+            "problemMatcher": {
+                "owner": "custom",
+                "pattern": {
+                    "regexp": ".",
+                    "file": 1,
+                    "location": 2,
+                    "message": 3
+                },
+                "background": {
+                    "activeOnStart": true,
+                    "beginsPattern": ".",
+                    "endsPattern": "."
+                },
+            },
+        },
+        {
             "label": "dapr-stop",
             "command": "dapr",
             "type": "process",
