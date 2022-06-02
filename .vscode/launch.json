@@ -2,7 +2,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "API",
+            "name": "API no events",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
@@ -17,7 +17,47 @@
                 "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
             },
             "env": {
-                "ASPNETCORE_ENVIRONMENT": "Development"
+                "ASPNETCORE_ENVIRONMENT": "Development",
+                "BasePath": "/",
+                "DatabaseConnectionString": "mongodb://admin:mongodb-k8s-demo@localhost:27017",
+                "DatabaseName": "mongotest",
+                "ContactsCollectionName": "contacts",
+                "QueueConnectionString": "", // Required if using AzureServiceBus, AzureEventGrid, or RabbitMQ
+                "QueueName": "contacts",
+                "QueueType": "None", // AzureServiceBus, AzureEventGrid, Dapr, RabbitMQ, or None
+                "TelemetryConnectionString": "",
+                "TelemetryType": "Console"
+            },
+            "sourceFileMap": {
+                "/Views": "${workspaceFolder}/Views"
+            }
+        },
+        {
+            "name": "API using RabbitMQ",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            // If you have changed target frameworks, make sure to update the program path.
+            "program": "${workspaceFolder}/bin/Debug/net6.0/contacts-api.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "stopAtEntry": false,
+            // Enable launching a web browser when ASP.NET Core starts. For more information: https://aka.ms/VSCode-CS-LaunchJson-WebBrowser
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
+            },
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development",
+                "BasePath": "/",
+                "DatabaseConnectionString": "mongodb://admin:mongodb-k8s-demo@localhost:27017",
+                "DatabaseName": "mongotest",
+                "ContactsCollectionName": "contacts",
+                "QueueConnectionString": "localhost", // Required if using AzureServiceBus, AzureEventGrid, or RabbitMQ
+                "QueueName": "contacts",
+                "QueueType": "RabbitMQ", // AzureServiceBus, AzureEventGrid, Dapr, RabbitMQ, or None
+                "TelemetryConnectionString": "",
+                "TelemetryType": "Console"
             },
             "sourceFileMap": {
                 "/Views": "${workspaceFolder}/Views"
@@ -27,7 +67,7 @@
             "name": "API & Dapr/RabbitMQ",
             "type": "coreclr",
             "request": "launch",
-            "preLaunchTask": "dapr-start-rabbitmq",
+            "preLaunchTask": "dapr-start-rabbitmq", // Dapr will use RabbitMQ, but the code will not
             "postDebugTask": "dapr-stop",
             // If you have changed target frameworks, make sure to update the program path.
             "program": "${workspaceFolder}/bin/Debug/net6.0/contacts-api.dll",
@@ -40,7 +80,16 @@
                 "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
             },
             "env": {
-                "ASPNETCORE_ENVIRONMENT": "Development"
+                "ASPNETCORE_ENVIRONMENT": "Development",
+                "BasePath": "/",
+                "DatabaseConnectionString": "mongodb://admin:mongodb-k8s-demo@localhost:27017",
+                "DatabaseName": "mongotest",
+                "ContactsCollectionName": "contacts",
+                "QueueConnectionString": "localhost", // Required if using AzureServiceBus, AzureEventGrid, or RabbitMQ
+                "QueueName": "contacts",
+                "QueueType": "Dapr", // AzureServiceBus, AzureEventGrid, Dapr, RabbitMQ, or None
+                "TelemetryConnectionString": "",
+                "TelemetryType": "Console"
             },
             "sourceFileMap": {
                 "/Views": "${workspaceFolder}/Views"
@@ -50,7 +99,7 @@
             "name": "API & Dapr/Redis",
             "type": "coreclr",
             "request": "launch",
-            "preLaunchTask": "dapr-start-redis",
+            "preLaunchTask": "dapr-start-redis", // Dapr will use Redis, but the code will not
             "postDebugTask": "dapr-stop",
             // If you have changed target frameworks, make sure to update the program path.
             "program": "${workspaceFolder}/bin/Debug/net6.0/contacts-api.dll",
@@ -63,7 +112,16 @@
                 "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
             },
             "env": {
-                "ASPNETCORE_ENVIRONMENT": "Development"
+                "ASPNETCORE_ENVIRONMENT": "Development",
+                "BasePath": "/",
+                "DatabaseConnectionString": "mongodb://admin:mongodb-k8s-demo@localhost:27017",
+                "DatabaseName": "mongotest",
+                "ContactsCollectionName": "contacts",
+                "QueueConnectionString": "localhost", // Required if using AzureServiceBus, AzureEventGrid, or RabbitMQ
+                "QueueName": "contacts",
+                "QueueType": "Dapr", // AzureServiceBus, AzureEventGrid, Dapr, RabbitMQ, or None
+                "TelemetryConnectionString": "",
+                "TelemetryType": "Console"
             },
             "sourceFileMap": {
                 "/Views": "${workspaceFolder}/Views"
@@ -73,7 +131,7 @@
             "name": "API & Dapr/ServiceBus",
             "type": "coreclr",
             "request": "launch",
-            "preLaunchTask": "dapr-start-servicebus",
+            "preLaunchTask": "dapr-start-servicebus", // Dapr will use Service Bus, but the code will not
             "postDebugTask": "dapr-stop",
             // If you have changed target frameworks, make sure to update the program path.
             "program": "${workspaceFolder}/bin/Debug/net6.0/contacts-api.dll",
@@ -86,7 +144,16 @@
                 "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
             },
             "env": {
-                "ASPNETCORE_ENVIRONMENT": "Development"
+                "ASPNETCORE_ENVIRONMENT": "Development",
+                "BasePath": "/",
+                "DatabaseConnectionString": "mongodb://admin:mongodb-k8s-demo@localhost:27017",
+                "DatabaseName": "mongotest",
+                "ContactsCollectionName": "contacts",
+                "QueueConnectionString": "localhost", // Required if using AzureServiceBus, AzureEventGrid, or RabbitMQ
+                "QueueName": "contacts",
+                "QueueType": "Dapr", // AzureServiceBus, AzureEventGrid, Dapr, RabbitMQ, or None
+                "TelemetryConnectionString": "",
+                "TelemetryType": "Console"
             },
             "sourceFileMap": {
                 "/Views": "${workspaceFolder}/Views"
