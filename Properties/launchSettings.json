@@ -9,42 +9,23 @@
     }
   },
   "profiles": {
-    "API no events": {
-      "commandName": "Project",
-      "launchBrowser": true,
-      "launchUrl": "swagger",
-      "applicationUrl": "https://localhost:44830;http://localhost:37292",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development",
-        "BasePath": "/",
-        "DatabaseConnectionString": "mongodb://admin:mongodb-k8s-demo@localhost:27017",
-        "DatabaseName": "mongotest",
-        "ContactsCollectionName": "contacts",
-        "QueueConnectionString": "",
-        "QueueName": "",
-        "QueueType": "None",
-        "TelemetryConnectionString": "",
-        "TelemetryType": "Console"
-      }
-    },
-    "API & Dapr": {
-      "commandName": "Project",
-      "launchBrowser": true,
-      "launchUrl": "swagger",
-      "applicationUrl": "https://localhost:44830;http://localhost:37292",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development",
-        "BasePath": "/",
-        "DatabaseConnectionString": "mongodb://admin:mongodb-k8s-demo@localhost:27017",
-        "DatabaseName": "mongotest",
-        "ContactsCollectionName": "contacts",
-        "QueueConnectionString": "localhost",
-        "QueueName": "contacts",
-        "QueueType": "Dapr",
-        "TelemetryConnectionString": "",
-        "TelemetryType": "Console"
-      }
+    "API": {
+        "commandName": "Project",
+        "launchBrowser": true,
+        "launchUrl": "swagger",
+        "applicationUrl": "https://localhost:44830;http://localhost:37292",
+        "environmentVariables": {
+            "ASPNETCORE_ENVIRONMENT": "Development",
+            "BasePath": "/",
+            "DatabaseConnectionString": "mongodb://admin:mongodb-k8s-demo@localhost:27017",
+            "DatabaseName": "mongotest",
+            "ContactsCollectionName": "contacts",
+            "QueueConnectionString": "",
+            "QueueName": "",
+            "QueueType": "None",
+            "TelemetryConnectionString": "",
+            "TelemetryType": "Console"
+        }
     }
   }
-}
 }
