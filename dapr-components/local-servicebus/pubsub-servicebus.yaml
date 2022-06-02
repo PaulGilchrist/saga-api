@@ -12,7 +12,7 @@ spec:
   version: v1
   metadata:
   - name: connectionString # Required when not using Azure Authentication.
-    value: "<Azure Service Bus Connection String Goes Here"
+    value: "Azure Service Bus Connection String Goes Here"
   - name: timeoutInSec # Optional
     value: 60
   - name: handlerTimeoutInSec # Optional
