@@ -2,9 +2,8 @@
     "version": "0.2.0",
     "configurations": [
         {
-            // Use IntelliSense to find out which attributes exist for C# debugging
-            // Use hover for the description of the existing attributes
-            // For further information visit https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md
+            // If using Dapr, start it manually with the following command
+            // dapr run --app-id contacts-api --app-port 80 --dapr-http-port 3500 --components-path ./dapr-components/local
             "name": "API",
             "type": "coreclr",
             "request": "launch",
@@ -27,20 +26,27 @@
             }
         },
         {
-            "name": "Dapr",
-            "type": "node",
-            "request": "attach",
-            "preLaunchTask": "dapr"
-        }
-    ],
-    "compounds": [
-        {
-            "name": "Dapr & API",
-            "configurations": [
-                "Dapr",
-                "API"
-            ],
-            "stopAll": true
+            // Nust stop Dapr manually after stopping debugging or next debug start will fail to complete preLaunchTask
+            "name": "API & Dapr",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "dapr",
+            // If you have changed target frameworks, make sure to update the program path.
+            "program": "${workspaceFolder}/bin/Debug/net6.0/contacts-api.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "stopAtEntry": false,
+            // Enable launching a web browser when ASP.NET Core starts. For more information: https://aka.ms/VSCode-CS-LaunchJson-WebBrowser
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
+            },
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            },
+            "sourceFileMap": {
+                "/Views": "${workspaceFolder}/Views"
+            }
         }
     ]
 }
