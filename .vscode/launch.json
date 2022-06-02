@@ -1,3 +1,4 @@
+// If using any of the Azure Service Bus options, first add the connection string for the "API & ServiceBus" configuration below, and in the file "./dapr-components/local-servicebus/pubsub-servicebus.yaml"
 {
     "version": "0.2.0",
     "configurations": [
