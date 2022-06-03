@@ -19,17 +19,17 @@ namespace API.Services {
             _httpClient = httpClient;
         }
 
-        public void Send(string type, string subject, object? jsonSerializableData, Type? dataSerializableType) {
+        public void Send(string queueName, string type, object? jsonSerializableData, Type? dataSerializableType) {
             // type examples: contact, email, phone, address, etc.
             var cloudEvent = new Azure.Messaging.CloudEvent("contacts-api", type, jsonSerializableData, dataSerializableType);
-            cloudEvent.Subject = subject; // created, updated, deleted, etc.
+            //cloudEvent.Subject = subject; // created, updated, deleted, etc.
             cloudEvent.Id = Guid.NewGuid().ToString();
             cloudEvent.Time = DateTime.Now;
             var json = JsonConvert.SerializeObject(cloudEvent, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
             // cloudEvent.data is not converting properly to JSON but the original jsonSerializableData does
             var dataJson = JsonConvert.SerializeObject(jsonSerializableData, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
             json = json.Replace("\"data\":{}", $"\"data\":{dataJson}");
-            var url = "http://localhost:3500/v1.0/publish/contacts-pubsub/" + _applicationSettings.QueueName;
+            var url = "http://localhost:3500/v1.0/publish/contacts-api/" + queueName;
             var message = new StringContent(json,Encoding.UTF8,"application/cloudevents+json");
             var result = _httpClient.PostAsync(url,message).GetAwaiter().GetResult();
             var activityTagsCollection = new ActivityTagsCollection();

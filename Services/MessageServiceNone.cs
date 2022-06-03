@@ -7,7 +7,7 @@ namespace API.Services {
 
         public MessageServiceNone(ApplicationSettings applicationSettings) { }
 
-        public void Send(string type, string subject, object? jsonSerializableData, Type? dataSerializableType) {
+        public void Send(string queueName, string type, object? jsonSerializableData, Type? dataSerializableType) {
             // Will not send event message to any queue
         }
 

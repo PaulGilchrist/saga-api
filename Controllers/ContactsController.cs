@@ -25,6 +25,8 @@ namespace API.Controllers {
         private readonly ContactService _contactService;
         private readonly IMessageService _messageService;
 
+        private readonly string _queueName = "contacts";
+
         public ContactsController(IMessageService messageService, ContactService contactService) {
             _contactService = contactService;
             _messageService = messageService;
@@ -112,7 +114,7 @@ namespace API.Controllers {
                 return StatusCode(500,ex.Message);
             }
             try {
-                _messageService.Send("contacts", "created", newContact, typeof(Contact));
+                _messageService.Send(_queueName, "created", newContact, typeof(Contact));
                 return Created("",newContact);
             } catch(Exception ex) {
                 // Compensation to rollback POST
@@ -157,7 +159,7 @@ namespace API.Controllers {
                 return StatusCode(500,ex.Message);
             }
             try {
-                _messageService.Send("contacts", "updated", updatedContact, typeof(Contact));
+                _messageService.Send(_queueName, "updated", updatedContact, typeof(Contact));
                 Activity.Current?.AddTag("value",updatedContact);
                 return NoContent();
             } catch(Exception ex) {
@@ -198,7 +200,7 @@ namespace API.Controllers {
                 return StatusCode(500,ex.Message);
             }
             try {
-                _messageService.Send("contacts", "updated", contact, typeof(Contact));
+                _messageService.Send(_queueName, "updated", contact, typeof(Contact));
                 Activity.Current?.AddTag("value",contact);
                 return NoContent();
             } catch(Exception ex) {
@@ -235,7 +237,7 @@ namespace API.Controllers {
                 return StatusCode(500,ex.Message);
             }
             try {
-                _messageService.Send("contacts", "deleted", id, typeof(string));
+                _messageService.Send(_queueName, "deleted", id, typeof(string));
                 return NoContent();
             } catch(Exception ex) {
                 // Compensation to rollback DELETE (will have a new ID unless database supports ID being passed in as part of create)

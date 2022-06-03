@@ -9,8 +9,7 @@ namespace API.Services {
     // Example for using multiple different backend message services through a common interface
     public class MessageServiceAzureServiceBus: IMessageService, IDisposable {
         private readonly ApplicationSettings _applicationSettings;
-        private ServiceBusSender _sender;
-        private ServiceBusReceiver _receiver;
+        private ServiceBusClient _client;
 
         private bool disposedValue;
 
@@ -18,33 +17,16 @@ namespace API.Services {
             _applicationSettings = applicationSettings;
             // Create a ServiceBusClient that will authenticate using a connection string
             string connectionString = _applicationSettings.QueueConnectionString;
-            string queueName = _applicationSettings.QueueName;
             // since ServiceBusClient implements IAsyncDisposable we create it with "await using"
             var options = new ServiceBusClientOptions { EnableCrossEntityTransactions = true };
-            var client = new ServiceBusClient(connectionString,options);
+            _client = new ServiceBusClient(connectionString,options);
             // Create the sender and receiver
-            _sender = client.CreateSender(queueName);
-            _receiver = client.CreateReceiver(queueName);
         }
 
-        public string? Receive() {
-            // the received message is a different type as it contains some service set properties
-            ServiceBusReceivedMessage receivedMessage = _receiver.ReceiveMessageAsync(TimeSpan.FromSeconds(5)).GetAwaiter().GetResult();
-            // get the message body as a string
-            string? message = null;
-            if(receivedMessage != null) {
-                message = receivedMessage.Body.ToString();
-                var activityTagsCollection = new ActivityTagsCollection();
-                activityTagsCollection.Add("message",message);
-                Activity.Current?.AddEvent(new ActivityEvent("AzureServiceBus.Message.Received",default,activityTagsCollection));
-            }
-            return message;
-        }
-
-        public void Send(string type, string subject, object? jsonSerializableData, Type? dataSerializableType) {
-            // type examples: contact, email, phone, address, etc.
+        public void Send(string queueName, string type, object? jsonSerializableData, Type? dataSerializableType) {
+            var sender = _client.CreateSender(queueName);
+            // type examples: created, updated, deleted, etc.
             var cloudEvent = new Azure.Messaging.CloudEvent("contacts-api", type, jsonSerializableData, dataSerializableType);
-            cloudEvent.Subject = subject; // created, updated, deleted, etc.
             cloudEvent.Id = new Guid().ToString();
             cloudEvent.Time = DateTime.Now;
             var json = JsonConvert.SerializeObject(cloudEvent, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
@@ -52,10 +34,12 @@ namespace API.Services {
             var dataJson = JsonConvert.SerializeObject(jsonSerializableData, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
             json = json.Replace("\"data\":{}", $"\"data\":{dataJson}");
             // send the message
-            _sender.SendMessageAsync(new ServiceBusMessage(json)).GetAwaiter();
+            sender.SendMessageAsync(new ServiceBusMessage(json)).GetAwaiter();
             var activityTagsCollection = new ActivityTagsCollection();
             activityTagsCollection.Add("message",json);
             Activity.Current?.AddEvent(new ActivityEvent("AzureServiceBus.Message.Sent",default,activityTagsCollection));
+            sender.CloseAsync().GetAwaiter();
+            sender.DisposeAsync().GetAwaiter();
         }
 
         public void Dispose() {
@@ -68,10 +52,8 @@ namespace API.Services {
             if(!disposedValue) {
                 if(disposing) {
                     // TODO: dispose managed state (managed objects)
-                    _sender.CloseAsync().GetAwaiter();
-                    _sender.DisposeAsync().GetAwaiter();
-                    _receiver.CloseAsync().GetAwaiter();
-                    _receiver.DisposeAsync().GetAwaiter();
+
+
                 }
 
                 // TODO: free unmanaged resources (unmanaged objects) and override finalizer

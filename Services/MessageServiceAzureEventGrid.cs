@@ -10,21 +10,19 @@ namespace API.Services {
     // Example for using multiple different backend message services through a common interface
     public class MessageServiceAzureEventGrid: IMessageService, IDisposable {
         private readonly ApplicationSettings _applicationSettings;
-        private EventGridPublisherClient _client;
 
         private bool disposedValue;
 
         public MessageServiceAzureEventGrid(ApplicationSettings applicationSettings) {
             _applicationSettings = applicationSettings;
-            _client = new EventGridPublisherClient(
-                new Uri(applicationSettings.QueueName), // Store the full URL name not just the short topic name
-                new AzureKeyCredential(applicationSettings.QueueConnectionString));
         }
 
-        public void Send(string type, string subject, object? jsonSerializableData, Type? dataSerializableType) {
-            // type examples: contact, email, phone, address, etc.
+        public void Send(string queueName, string type, object? jsonSerializableData, Type? dataSerializableType) {
+            var client = new EventGridPublisherClient(
+                new Uri(queueName), // Store the full URL name not just the short topic name
+                new AzureKeyCredential(_applicationSettings.QueueConnectionString));
+            // type examples: created, updated, deleted, etc.
             var cloudEvent = new Azure.Messaging.CloudEvent("contacts-api", type, jsonSerializableData, dataSerializableType);
-            cloudEvent.Subject = subject; // created, updated, deleted, etc.
             cloudEvent.Id = new Guid().ToString();
             cloudEvent.Time = DateTime.Now;
             var json = JsonConvert.SerializeObject(cloudEvent, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
@@ -32,7 +30,7 @@ namespace API.Services {
             var dataJson = JsonConvert.SerializeObject(jsonSerializableData, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
             json = json.Replace("\"data\":{}", $"\"data\":{dataJson}");
             // send the message
-            _client.SendEventAsync(cloudEvent).GetAwaiter();
+            client.SendEventAsync(cloudEvent).GetAwaiter();
             var activityTagsCollection = new ActivityTagsCollection();
             activityTagsCollection.Add("message",json);
             Activity.Current?.AddEvent(new ActivityEvent("AzureEventGrid.Message.Sent",default,activityTagsCollection));

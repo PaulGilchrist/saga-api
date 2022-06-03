@@ -7,7 +7,6 @@ namespace API.Models {
         public string DatabaseConnectionString { get; set; }
         public string DatabaseName { get; set; }
         public string QueueConnectionString { get; set; }
-        public string QueueName { get; set; }
         public string QueueType { get; set; }
         public string TelemetryConnectionString { get; set; }
         public string TelemetryType { get; set; }
@@ -18,7 +17,6 @@ namespace API.Models {
             DatabaseConnectionString = Environment.GetEnvironmentVariable("DatabaseConnectionString");
             DatabaseName = Environment.GetEnvironmentVariable("DatabaseName");
             QueueConnectionString = Environment.GetEnvironmentVariable("QueueConnectionString"); // Same as HostName for QueueType="RabbitMQ"
-            QueueName = Environment.GetEnvironmentVariable("QueueName");
             QueueType = Environment.GetEnvironmentVariable("QueueType"); // Valid options are "AzureEventGrid", "AzureServiceBus", "Dapr", "None", or "RabbitMQ" (Default: "None")
                 // If QueueType=AzureEventGrid then QueueName will be the topic's full URL, and QueueConnectionString will be the AzureKeyCredential
                 // If QueueType=RabbitMQ then QueueConnectionString will be the HostName

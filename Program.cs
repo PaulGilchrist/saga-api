@@ -102,7 +102,7 @@ var healthCheckBuilder = builder.Services.AddHealthChecks();
 switch(applicationSettings.QueueType) {
     case "AzureServiceBus":
         builder.Services.AddSingleton<IMessageService,MessageServiceAzureServiceBus>();
-        healthCheckBuilder.AddAzureServiceBusTopic(applicationSettings.QueueConnectionString, applicationSettings.QueueName, null, Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Unhealthy);
+        healthCheckBuilder.AddAzureServiceBusTopic(applicationSettings.QueueConnectionString, "contacts", null, Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Unhealthy);
         break;
     case "AzureEventGrid":
         builder.Services.AddSingleton<IMessageService,MessageServiceAzureEventGrid>();

@@ -21,7 +21,6 @@
             "DatabaseName": "mongotest",
             "ContactsCollectionName": "contacts",
             "QueueConnectionString": "",
-            "QueueName": "",
             "QueueType": "None",
             "TelemetryConnectionString": "",
             "TelemetryType": "Console"

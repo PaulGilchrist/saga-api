@@ -5,7 +5,7 @@
 apiVersion: dapr.io/v1alpha1
 kind: Component
 metadata:
-  name: contacts-pubsub
+  name: contacts-api # match service name
   namespace: default
 spec:
   type: pubsub.azure.servicebus

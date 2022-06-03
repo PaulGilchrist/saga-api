@@ -22,7 +22,6 @@
                 "DatabaseName": "mongotest",
                 "ContactsCollectionName": "contacts",
                 "QueueConnectionString": "", // Not required for "QueueType": "None" or "Dapr"
-                "QueueName": "", // Not required for "QueueType": "None"
                 "QueueType": "None", // AzureServiceBus, AzureEventGrid, Dapr, RabbitMQ, or None
                 "TelemetryConnectionString": "",
                 "TelemetryType": "Console"
@@ -51,7 +50,6 @@
                 "DatabaseName": "mongotest",
                 "ContactsCollectionName": "contacts",
                 "QueueConnectionString": "localhost",
-                "QueueName": "contacts",
                 "QueueType": "RabbitMQ", // AzureServiceBus, AzureEventGrid, Dapr, RabbitMQ, or None
                 "TelemetryConnectionString": "",
                 "TelemetryType": "Console"
@@ -80,7 +78,6 @@
                 "DatabaseName": "mongotest",
                 "ContactsCollectionName": "contacts",
                 "QueueConnectionString": "Azure Service Bus Connection String Goes Here", // Change this value of service will error when trying to connect to Azure Service Bus
-                "QueueName": "contacts",
                 "QueueType": "AzureServiceBus", // AzureServiceBus, AzureEventGrid, Dapr, RabbitMQ, or None
                 "TelemetryConnectionString": "",
                 "TelemetryType": "Console"
@@ -110,7 +107,6 @@
                 "DatabaseName": "mongotest",
                 "ContactsCollectionName": "contacts",
                 "QueueConnectionString": "", // Not required for "QueueType": "None" or "Dapr"
-                "QueueName": "contacts",
                 "QueueType": "Dapr", // AzureServiceBus, AzureEventGrid, Dapr, RabbitMQ, or None
                 "TelemetryConnectionString": "",
                 "TelemetryType": "Console"
@@ -140,7 +136,6 @@
                 "DatabaseName": "mongotest",
                 "ContactsCollectionName": "contacts",
                 "QueueConnectionString": "", // Not required for "QueueType": "None" or "Dapr"
-                "QueueName": "contacts",
                 "QueueType": "Dapr", // AzureServiceBus, AzureEventGrid, Dapr, RabbitMQ, or None
                 "TelemetryConnectionString": "",
                 "TelemetryType": "Console"
@@ -170,7 +165,6 @@
                 "DatabaseName": "mongotest",
                 "ContactsCollectionName": "contacts",
                 "QueueConnectionString": "", // Not required for "QueueType": "None" or "Dapr"
-                "QueueName": "contacts",
                 "QueueType": "Dapr", // AzureServiceBus, AzureEventGrid, Dapr, RabbitMQ, or None
                 "TelemetryConnectionString": "",
                 "TelemetryType": "Console"
