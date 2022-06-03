@@ -240,7 +240,28 @@ namespace API.Controllers {
                 _messageService.Send(_queueName, "deleted", id, typeof(string));
                 return NoContent();
             } catch(Exception ex) {
-                // Compensation to rollback DELETE (will have a new ID unless database supports ID being passed in as part of create)
+                /* Database must allow passing of id with create or must wrap both delete and message send in transaction
+                    If using MSSQL Entity Framework do the following to maintain the original ID:
+                        // Example of SAGA compensation pattern to rollback a delete keeping original ID
+                        using var transaction = _db.Database.BeginTransaction();
+                        _db.Database.ExecuteSqlCommand("set identity insert dbo.Contacts on");
+                        _db.Contacts.Add(contact);
+                        await _db.SaveChangesAsync();
+                        _db.Database.ExecuteSqlCommand("set identity insert dbo.Contacts off");
+                        transaction.Commit();
+                    Or do this to prevent committing the SQL commit should the event send fail:
+                        // Example of transaction pattern to prevent delete should event message fail
+                        using var transaction = _db.Database.BeginTransaction();
+                        _db.Contacts.Remove(contact);
+                        await _db.SaveChangesAsync();
+                        try {
+                            _messageService.Send(_queueName, "deleted", id, typeof(string));
+                            transaction.Commit();
+                        } catch(Exception ex) {
+                            // Transaction not committed because the event message failed to send
+                            Activity.Current?.AddTag("exception",ex);
+                        }
+                */
                 var newContact = await _contactService.Create(foundContact);
                 Activity.Current?.AddTag("Exception",ex);
                 return StatusCode(500,ex.Message);
