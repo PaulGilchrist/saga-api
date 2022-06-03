@@ -1,10 +1,4 @@
-# docker build --rm -f "Dockerfile" --no-cache --platform linux/arm64 -t paulgilchrist/mongodb-api:arm64 .
-# docker push paulgilchrist/mongodb-api:arm64
-# docker build --rm -f "Dockerfile" --no-cache --platform linux/amd64 -t paulgilchrist/mongodb-api:amd64 .
-# docker push paulgilchrist/mongodb-api:amd64
-# docker manifest rm paulgilchrist/mongodb-api:latest
-# docker manifest create paulgilchrist/mongodb-api:latest paulgilchrist/mongodb-api:arm64 paulgilchrist/mongodb-api:amd64
-# docker manifest push paulgilchrist/mongodb-api:latest
+# bash build.sh
 # kubectl rollout restart deployment contacts-api -n demo
 FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
 WORKDIR /app
