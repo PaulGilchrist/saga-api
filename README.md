@@ -8,7 +8,7 @@ Main additions to the Visual Studio template include:
 * CORS support
 * OData support
 * OpenTelemetry support with exporters for AppInsights, Console, or Zipkin
-* Messaging support for AQzureEventGrid, AzureServiceBus, Dapr, or RabbitMQ
+* Messaging support for AzureEventGrid, AzureServiceBus, Dapr, or RabbitMQ
   * SAGA pattern used to ensure both event messaging and DB changes both succeed or both fail
     * This is the recommended approach over transactions (prepare/commit)
 * Ingress-gateway or reverse-proxy support for Open Api when defining BasePath environment variable
