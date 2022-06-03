@@ -3,7 +3,7 @@
 apiVersion: dapr.io/v1alpha1
 kind: Component
 metadata:
-  name: contacts-api # match service name
+  name: contacts-api-pubsub # Path becomes http://localhost:3500/publish/contacts-api-pubsub
   namespace: default
 spec:
   type: pubsub.rabbitmq

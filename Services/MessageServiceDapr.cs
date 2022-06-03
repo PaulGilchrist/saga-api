@@ -29,7 +29,7 @@ namespace API.Services {
             // cloudEvent.data is not converting properly to JSON but the original jsonSerializableData does
             var dataJson = JsonConvert.SerializeObject(jsonSerializableData, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
             json = json.Replace("\"data\":{}", $"\"data\":{dataJson}");
-            var url = "http://localhost:3500/v1.0/publish/contacts-api/" + queueName;
+            var url = "http://localhost:3500/v1.0/publish/contacts-api-pubsub/" + queueName;
             var message = new StringContent(json,Encoding.UTF8,"application/cloudevents+json");
             var result = _httpClient.PostAsync(url,message).GetAwaiter().GetResult();
             var activityTagsCollection = new ActivityTagsCollection();
