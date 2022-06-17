@@ -3,6 +3,7 @@ using API.Models;
 using API.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
+using Microsoft.AspNetCore.OData.Routing.Controllers;
 using Newtonsoft.Json;
 
 #pragma warning disable S125 // Sections of code should not be commented out
@@ -20,7 +21,7 @@ namespace API.Controllers {
     /// Represents a RESTful service for contacts
     /// IMPORTANT - [Produces("application/json")] is required on every HTTP action or Swagger will not show what object model will be returned
     /// </summary>
-    public class ContactsController: Controller {
+    public class ContactsController: ODataController {
 
         private readonly ContactService _contactService;
         private readonly IMessageService _messageService;

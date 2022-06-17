@@ -17,14 +17,17 @@
             },
             "env": {
                 "ASPNETCORE_ENVIRONMENT": "Development",
-                "BasePath": "/",
-                "DatabaseConnectionString": "mongodb://admin:mongodb-k8s-demo@localhost:27017",
-                "DatabaseName": "mongotest",
-                "ContactsCollectionName": "contacts",
-                "QueueConnectionString": "", // Not required for "QueueType": "None" or "Dapr"
-                "QueueType": "None", // AzureServiceBus, AzureEventGrid, Dapr, RabbitMQ, or None
-                "TelemetryConnectionString": "",
-                "TelemetryType": "Console"
+                "BASE_PATH": "/",
+                "CONTACTS_COLLECTION_NAME": "contacts",
+                "DATABASE_CONNECTION_STRING": "mongodb://admin:mongodb-k8s-demo@localhost:27017",
+                "DATABASE_NAME": "mongotest",
+                "OAUTH_AUDIENCE": "",
+                "OAUTH_AUTHORITY": "",
+                "ODATA_MAX_PAGE_SIZE": "1000",
+                "QUEUE_CONNECTION_STRING": "",
+                "QUEUE_TYPE": "None",
+                "TELEMETRY_CONNECTION_STRING": "",
+                "TELEMETRY_TYPE": "Console"
             },
             "sourceFileMap": {
                 "/Views": "${workspaceFolder}/Views"
@@ -45,14 +48,17 @@
             },
             "env": {
                 "ASPNETCORE_ENVIRONMENT": "Development",
-                "BasePath": "/",
-                "DatabaseConnectionString": "mongodb://admin:mongodb-k8s-demo@localhost:27017",
-                "DatabaseName": "mongotest",
-                "ContactsCollectionName": "contacts",
-                "QueueConnectionString": "localhost",
-                "QueueType": "RabbitMQ", // AzureServiceBus, AzureEventGrid, Dapr, RabbitMQ, or None
-                "TelemetryConnectionString": "",
-                "TelemetryType": "Console"
+                "BASE_PATH": "/",
+                "CONTACTS_COLLECTION_NAME": "contacts",
+                "DATABASE_CONNECTION_STRING": "mongodb://admin:mongodb-k8s-demo@localhost:27017",
+                "DATABASE_NAME": "mongotest",
+                "OAUTH_AUDIENCE": "",
+                "OAUTH_AUTHORITY": "",
+                "ODATA_MAX_PAGE_SIZE": "1000",
+                "QUEUE_CONNECTION_STRING": "",
+                "QUEUE_TYPE": "None",
+                "TELEMETRY_CONNECTION_STRING": "",
+                "TELEMETRY_TYPE": "Console"
             },
             "sourceFileMap": {
                 "/Views": "${workspaceFolder}/Views"
@@ -73,14 +79,17 @@
             },
             "env": {
                 "ASPNETCORE_ENVIRONMENT": "Development",
-                "BasePath": "/",
-                "DatabaseConnectionString": "mongodb://admin:mongodb-k8s-demo@localhost:27017",
-                "DatabaseName": "mongotest",
-                "ContactsCollectionName": "contacts",
-                "QueueConnectionString": "Azure Service Bus Connection String Goes Here", // Change this value of service will error when trying to connect to Azure Service Bus
-                "QueueType": "AzureServiceBus", // AzureServiceBus, AzureEventGrid, Dapr, RabbitMQ, or None
-                "TelemetryConnectionString": "",
-                "TelemetryType": "Console"
+                "BASE_PATH": "/",
+                "CONTACTS_COLLECTION_NAME": "contacts",
+                "DATABASE_CONNECTION_STRING": "mongodb://admin:mongodb-k8s-demo@localhost:27017",
+                "DATABASE_NAME": "mongotest",
+                "OAUTH_AUDIENCE": "",
+                "OAUTH_AUTHORITY": "",
+                "ODATA_MAX_PAGE_SIZE": "1000",
+                "QUEUE_CONNECTION_STRING": "",
+                "QUEUE_TYPE": "None",
+                "TELEMETRY_CONNECTION_STRING": "",
+                "TELEMETRY_TYPE": "Console"
             },
             "sourceFileMap": {
                 "/Views": "${workspaceFolder}/Views"
@@ -102,14 +111,17 @@
             },
             "env": {
                 "ASPNETCORE_ENVIRONMENT": "Development",
-                "BasePath": "/",
-                "DatabaseConnectionString": "mongodb://admin:mongodb-k8s-demo@localhost:27017",
-                "DatabaseName": "mongotest",
-                "ContactsCollectionName": "contacts",
-                "QueueConnectionString": "", // Not required for "QueueType": "None" or "Dapr"
-                "QueueType": "Dapr", // AzureServiceBus, AzureEventGrid, Dapr, RabbitMQ, or None
-                "TelemetryConnectionString": "",
-                "TelemetryType": "Console"
+                "BASE_PATH": "/",
+                "CONTACTS_COLLECTION_NAME": "contacts",
+                "DATABASE_CONNECTION_STRING": "mongodb://admin:mongodb-k8s-demo@localhost:27017",
+                "DATABASE_NAME": "mongotest",
+                "OAUTH_AUDIENCE": "",
+                "OAUTH_AUTHORITY": "",
+                "ODATA_MAX_PAGE_SIZE": "1000",
+                "QUEUE_CONNECTION_STRING": "",
+                "QUEUE_TYPE": "None",
+                "TELEMETRY_CONNECTION_STRING": "",
+                "TELEMETRY_TYPE": "Console"
             },
             "sourceFileMap": {
                 "/Views": "${workspaceFolder}/Views"
@@ -131,14 +143,17 @@
             },
             "env": {
                 "ASPNETCORE_ENVIRONMENT": "Development",
-                "BasePath": "/",
-                "DatabaseConnectionString": "mongodb://admin:mongodb-k8s-demo@localhost:27017",
-                "DatabaseName": "mongotest",
-                "ContactsCollectionName": "contacts",
-                "QueueConnectionString": "", // Not required for "QueueType": "None" or "Dapr"
-                "QueueType": "Dapr", // AzureServiceBus, AzureEventGrid, Dapr, RabbitMQ, or None
-                "TelemetryConnectionString": "",
-                "TelemetryType": "Console"
+                "BASE_PATH": "/",
+                "CONTACTS_COLLECTION_NAME": "contacts",
+                "DATABASE_CONNECTION_STRING": "mongodb://admin:mongodb-k8s-demo@localhost:27017",
+                "DATABASE_NAME": "mongotest",
+                "OAUTH_AUDIENCE": "",
+                "OAUTH_AUTHORITY": "",
+                "ODATA_MAX_PAGE_SIZE": "1000",
+                "QUEUE_CONNECTION_STRING": "",
+                "QUEUE_TYPE": "None",
+                "TELEMETRY_CONNECTION_STRING": "",
+                "TELEMETRY_TYPE": "Console"
             },
             "sourceFileMap": {
                 "/Views": "${workspaceFolder}/Views"
@@ -160,14 +175,17 @@
             },
             "env": {
                 "ASPNETCORE_ENVIRONMENT": "Development",
-                "BasePath": "/",
-                "DatabaseConnectionString": "mongodb://admin:mongodb-k8s-demo@localhost:27017",
-                "DatabaseName": "mongotest",
-                "ContactsCollectionName": "contacts",
-                "QueueConnectionString": "", // Not required for "QueueType": "None" or "Dapr"
-                "QueueType": "Dapr", // AzureServiceBus, AzureEventGrid, Dapr, RabbitMQ, or None
-                "TelemetryConnectionString": "",
-                "TelemetryType": "Console"
+                "BASE_PATH": "/",
+                "CONTACTS_COLLECTION_NAME": "contacts",
+                "DATABASE_CONNECTION_STRING": "mongodb://admin:mongodb-k8s-demo@localhost:27017",
+                "DATABASE_NAME": "mongotest",
+                "OAUTH_AUDIENCE": "",
+                "OAUTH_AUTHORITY": "",
+                "ODATA_MAX_PAGE_SIZE": "1000",
+                "QUEUE_CONNECTION_STRING": "",
+                "QUEUE_TYPE": "None",
+                "TELEMETRY_CONNECTION_STRING": "",
+                "TELEMETRY_TYPE": "Console"
             },
             "sourceFileMap": {
                 "/Views": "${workspaceFolder}/Views"

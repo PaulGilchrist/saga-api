@@ -20,9 +20,9 @@ namespace API.Services {
         }
 
         public void Send(string queueName, string type, object? jsonSerializableData, Type? dataSerializableType) {
-            // type examples: contact, email, phone, address, etc.
+            // queueName examples: contact, email, phone, address, etc.
             var cloudEvent = new Azure.Messaging.CloudEvent("contacts-api", type, jsonSerializableData, dataSerializableType);
-            //cloudEvent.Subject = subject; // created, updated, deleted, etc.
+            //cloudEvent.Type = examples: // created, updated, deleted, etc.
             cloudEvent.Id = Guid.NewGuid().ToString();
             cloudEvent.Time = DateTime.Now;
             var json = JsonConvert.SerializeObject(cloudEvent, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
