@@ -40,8 +40,7 @@ namespace API.Controllers {
         /// <response code="200">The contacts were successfully retrieved</response>
         /// <response code="401">Authentication required</response>
         /// <response code="403">Access denied due to inadaquate claim roles</response>
-        [HttpGet]
-        [Route("contacts")]
+        [HttpGet("contacts")]
         [Produces("application/json")]
         [ProducesResponseType(typeof(IEnumerable<Contact>),200)] // Ok
         [ProducesResponseType(typeof(void),401)] // Unauthorized
@@ -72,8 +71,7 @@ namespace API.Controllers {
         /// <response code="401">Authentication required</response>
         /// <response code="403">Access denied due to inadaquate claim roles</response>
         /// <response code="404">The contact was not found</response>
-        [HttpGet]
-        [Route("contacts/{id}")]
+        [HttpGet("contacts({id})")]
         [Produces("application/json")]
         [ProducesResponseType(typeof(Contact),200)] // Ok
         [ProducesResponseType(typeof(void),401)] // Unauthorized
@@ -100,8 +98,7 @@ namespace API.Controllers {
         /// <response code="400">The contact is invalid</response>
         /// <response code="401">Authentication required</response>
         /// <response code="403">Access denied due to inadaquate claim roles</response>
-        [HttpPost]
-        [Route("contacts")]
+        [HttpPost("contacts")]
         [Produces("application/json")]
         [ProducesResponseType(typeof(IEnumerable<Contact>),201)] // Created
         [ProducesResponseType(typeof(string),400)] // Bad Request (should be ModelStateDictionary)
@@ -133,8 +130,7 @@ namespace API.Controllers {
         /// <response code="401">Authentication required</response>
         /// <response code="403">Access denied due to inadaquate claim roles</response>
         /// <response code="404">The contact was not found</response>
-        [HttpPatch]
-        [Route("contacts/{id}")]
+        [HttpPatch("contacts({id})")]
         [Produces("application/json")]
         [ProducesResponseType(typeof(void),204)] // No Content 
         [ProducesResponseType(typeof(string),400)] // Bad Request (should be ModelStateDictionary)
@@ -179,8 +175,7 @@ namespace API.Controllers {
         /// <response code="401">Authentication required</response>
         /// <response code="403">Access denied due to inadaquate claim roles</response>
         /// <response code="404">The contact was not found</response>
-        [HttpPut]
-        [Route("contacts/{id}")]
+        [HttpPut("contacts({id})")]
         [Produces("application/json")]
         [ProducesResponseType(typeof(void),204)] // No Content
         [ProducesResponseType(typeof(string),400)] // Bad Request (should be ModelStateDictionary)
@@ -218,8 +213,7 @@ namespace API.Controllers {
         /// <response code="401">Authentication required</response>
         /// <response code="403">Access denied due to inadaquate claim roles</response>
         /// <response code="404">The product was not found</response>
-        [HttpDelete]
-        [Route("contacts/{id}")]
+        [HttpDelete("contacts/{id}")]
         [Produces("application/json")]
         [ProducesResponseType(typeof(void),204)] // No Content
         [ProducesResponseType(typeof(void),401)] // Unauthorized

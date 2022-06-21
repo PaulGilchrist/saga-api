@@ -9,12 +9,14 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.OData;
 using Microsoft.AspNetCore.OData.Batch;
+using Microsoft.AspNetCore.OData.Routing.Attributes;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.OpenApi.Models;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using Polly;
 using Polly.Extensions.Http;
+using Swashbuckle.AspNetCore.SwaggerGen;
 using Swashbuckle.AspNetCore.SwaggerUI;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -111,18 +113,18 @@ builder.Services.AddCors(options => {
          });
 });
 builder.Services.AddSingleton<ContactService>();
-var batchHandler = new DefaultODataBatchHandler();
-builder.Services.AddControllers().AddOData(options =>
-    options.AddRouteComponents("", ODataModel.Get(applicationSettings.ODataMaxPageSize), batchHandler)
-        .Count().Expand().Filter().OrderBy().Select().SetMaxTop(applicationSettings.ODataMaxPageSize)            
-);
+// Add OData including $batch
+builder.Services.AddControllers().AddOData(options => {
+    var odataBatchHandler = new DefaultODataBatchHandler();
+    odataBatchHandler.MessageQuotas.MaxOperationsPerChangeset = 5;
+    odataBatchHandler.MessageQuotas.MaxNestingDepth = 2;
+    odataBatchHandler.MessageQuotas.MaxPartsPerBatch = 8;
+    options.Count().Expand().Filter().OrderBy().Select().SetMaxTop(applicationSettings.ODataMaxPageSize);
+    options.AddRouteComponents(ODataModel.Get(applicationSettings.ODataMaxPageSize), odataBatchHandler);
+});
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options => {
-    var basePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-    if(basePath != null) {
-        options.IncludeXmlComments(Path.Combine(basePath,"contacts-api.xml"));
-    }
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme() {
         Name = "Authorization",
         Type = SecuritySchemeType.ApiKey,
@@ -146,11 +148,17 @@ builder.Services.AddSwaggerGen(options => {
     options.SchemaFilter<SwaggerIgnoreFilter>();
     options.OperationFilter<ODataEnableQueryFiler>();
     options.DocumentFilter<SwaggerDocumentFilter>();
+    var basePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+    if(basePath != null) {
+        options.IncludeXmlComments(Path.Combine(basePath,"contacts-api.xml"));
+    }
 });
 var app = builder.Build();
 // Configure the HTTP request pipeline.
-//if (app.Environment.IsDevelopment()) {}
-app.UseODataBatching();
+if(app.Environment.IsDevelopment()) {
+    app.UseDeveloperExceptionPage();
+    app.UseODataRouteDebug();
+}
 app.UseSwagger(options => {
     options.PreSerializeFilters.Add((swaggerDoc,httpReq) => {
         var contact = new OpenApiContact {
@@ -168,17 +176,21 @@ app.UseSwagger(options => {
     });
 });
 app.UseSwaggerUI(options => {
-    options.DocumentTitle = "Contacts API";
     options.DefaultModelExpandDepth(2);
-    options.DefaultModelsExpandDepth(-1);
+    options.DefaultModelsExpandDepth(-1); // hides schemas dropdown
     options.DefaultModelRendering(ModelRendering.Model);
     options.DisplayRequestDuration();
     //options.DocExpansion(DocExpansion.None);
+    options.EnableTryItOutByDefault();
 });
+app.UseODataBatching();
+app.UseRouting(); // This along with UseEndpoints() required for $batch to work along side standard OData
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
-app.MapControllers();
+app.UseEndpoints(endpoints => { // This along with UseRouting() required for $batch to work along side standard OData
+    endpoints.MapControllers();
+});
 app.MapHealthChecks("/health/readiness", new HealthCheckOptions() { ResponseWriter = WriteReadinessResponse }).AllowAnonymous();
 app.MapHealthChecks("/health/liveness", new HealthCheckOptions() { Predicate = (_) => false }).AllowAnonymous();
 app.Run();
