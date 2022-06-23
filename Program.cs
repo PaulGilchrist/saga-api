@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.OData;
 using Microsoft.AspNetCore.OData.Batch;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.OpenApi.Models;
 using OpenTelemetry.Resources;
@@ -29,7 +30,7 @@ var serviceVersion = "1.0.0";
 
 var builder = WebApplication.CreateBuilder(args);
 var applicationSettings = new ApplicationSettings();
-builder.Services.AddSingleton<ApplicationSettings>();
+builder.Services.AddSingleton<ApplicationSettings>(applicationSettings);
 
 // Configure important OpenTelemetry settings and the console exporter
 builder.Services.AddOpenTelemetryTracing(b => {
@@ -84,14 +85,15 @@ if(applicationSettings.OAuthAudience != null) {
 // Example showing support for multiple messaging platforms
 switch(applicationSettings.QueueType) {
     case "AzureServiceBus":
-        builder.Services.AddSingleton<IMessageService,MessageServiceAzureServiceBus>();
+        //builder.Services.AddScoped<IMessageService,MessageServiceAzureServiceBus>();
         healthCheckBuilder.AddAzureServiceBusTopic(applicationSettings.QueueConnectionString, "contacts", null, Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Unhealthy);
         break;
     case "AzureEventGrid":
-        builder.Services.AddSingleton<IMessageService,MessageServiceAzureEventGrid>();
+        //builder.Services.AddScoped<IMessageService,MessageServiceAzureEventGrid>();
         break;
     case "Dapr":
-        builder.Services.AddHttpClient<IMessageService, MessageServiceDapr>()
+         builder.Services.AddSingleton<IMessageService,MessageServiceDapr>();
+         builder.Services.AddHttpClient("DefaultHttpClient")
             .SetHandlerLifetime(TimeSpan.FromMinutes(5))  //Set lifetime to five minutes
             .AddPolicyHandler(GetRetryPolicy())
             .AddPolicyHandler(GetCircuitBreakerPolicy());
@@ -102,7 +104,7 @@ switch(applicationSettings.QueueType) {
         healthCheckBuilder.AddRabbitMQ(uri, null, null, Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Unhealthy);
         break;
     default: // None
-        builder.Services.AddSingleton<IMessageService,MessageServiceNone>();
+        //builder.Services.AddScoped<IMessageService,MessageServiceNone>();
         break;
 }
 healthCheckBuilder.AddMongoDb(applicationSettings.DatabaseConnectionString, applicationSettings.DatabaseName, null, Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Unhealthy);
@@ -119,8 +121,10 @@ builder.Services.AddCors(options => {
 });
 builder.Services.AddSingleton<ContactService>();
 // Add OData including $batch
-builder.Services.AddControllers().AddOData(options => {
-    var odataBatchHandler = new DefaultODataBatchHandler();
+builder.Services.AddControllers().AddOData((options, serviceProvider) => {
+    var messageService = serviceProvider.GetService<IMessageService>();
+    var odataBatchHandler = new MyDefaultODataBatchHandler(messageService);
+    //var odataBatchHandler = new DefaultODataBatchHandler();
     odataBatchHandler.MessageQuotas.MaxOperationsPerChangeset = 5;
     odataBatchHandler.MessageQuotas.MaxNestingDepth = 2;
     odataBatchHandler.MessageQuotas.MaxPartsPerBatch = 8;

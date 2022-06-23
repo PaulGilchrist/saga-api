@@ -115,9 +115,7 @@ namespace API.Controllers {
                 return StatusCode(500,ex.Message);
             }
             try {
-               if(SendEvent(Request)) {
-                    _messageService.Send(_queueName, "created", newContact, typeof(Contact));
-               }
+               _messageService.Send(_queueName, "created", newContact, typeof(Contact), SendDelayed(Request));
                return Created("",newContact);
             } catch(Exception ex) {
                 // Compensation to rollback POST
@@ -161,9 +159,7 @@ namespace API.Controllers {
                 return StatusCode(500,ex.Message);
             }
             try {
-                if(SendEvent(Request)) {
-                  _messageService.Send(_queueName, "updated", updatedContact, typeof(Contact));
-                }
+                _messageService.Send(_queueName, "updated", updatedContact, typeof(Contact), SendDelayed(Request));
                 Activity.Current?.AddTag("value",updatedContact);
                 return NoContent();
             } catch(Exception ex) {
@@ -199,9 +195,7 @@ namespace API.Controllers {
                 return StatusCode(500,ex.Message);
             }
             try {
-                if(SendEvent(Request)) {
-                    _messageService.Send(_queueName, "deleted", id, typeof(string));
-                }
+                _messageService.Send(_queueName, "deleted", id, typeof(string), SendDelayed(Request));
                 return NoContent();
             } catch(Exception ex) {
                 /* Database must allow passing of id with create or must wrap both delete and message send in transaction
@@ -234,9 +228,9 @@ namespace API.Controllers {
 
         #endregion
 
-        public bool SendEvent(HttpRequest request) {
-            // Only send an event if this request is not part of a $batch ChangeSet
-            return ((ODataBatchFeature?)request.HttpContext.Features[typeof(IODataBatchFeature)])?.ChangeSetId == null;
+        public bool SendDelayed(HttpRequest request) {
+            // Delay the sending of the message if this is part of a $batch ChangeSet
+            return ((ODataBatchFeature?)request.HttpContext.Features[typeof(IODataBatchFeature)])?.ChangeSetId != null;
         }
 
     }
