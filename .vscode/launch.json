@@ -55,8 +55,8 @@
                 "OAUTH_AUDIENCE": "",
                 "OAUTH_AUTHORITY": "",
                 "ODATA_MAX_PAGE_SIZE": "1000",
-                "QUEUE_CONNECTION_STRING": "",
-                "QUEUE_TYPE": "None",
+                "QUEUE_CONNECTION_STRING": "localhost",
+                "QUEUE_TYPE": "RabbitMQ",
                 "TELEMETRY_CONNECTION_STRING": "",
                 "TELEMETRY_TYPE": "Console"
             },
@@ -87,7 +87,7 @@
                 "OAUTH_AUTHORITY": "",
                 "ODATA_MAX_PAGE_SIZE": "1000",
                 "QUEUE_CONNECTION_STRING": "",
-                "QUEUE_TYPE": "None",
+                "QUEUE_TYPE": "AzureServiceBus",
                 "TELEMETRY_CONNECTION_STRING": "",
                 "TELEMETRY_TYPE": "Console"
             },
@@ -119,7 +119,7 @@
                 "OAUTH_AUTHORITY": "",
                 "ODATA_MAX_PAGE_SIZE": "1000",
                 "QUEUE_CONNECTION_STRING": "",
-                "QUEUE_TYPE": "None",
+                "QUEUE_TYPE": "Dapr",
                 "TELEMETRY_CONNECTION_STRING": "",
                 "TELEMETRY_TYPE": "Console"
             },
@@ -151,7 +151,7 @@
                 "OAUTH_AUTHORITY": "",
                 "ODATA_MAX_PAGE_SIZE": "1000",
                 "QUEUE_CONNECTION_STRING": "",
-                "QUEUE_TYPE": "None",
+                "QUEUE_TYPE": "Dapr",
                 "TELEMETRY_CONNECTION_STRING": "",
                 "TELEMETRY_TYPE": "Console"
             },
@@ -183,7 +183,7 @@
                 "OAUTH_AUTHORITY": "",
                 "ODATA_MAX_PAGE_SIZE": "1000",
                 "QUEUE_CONNECTION_STRING": "",
-                "QUEUE_TYPE": "None",
+                "QUEUE_TYPE": "Dapr",
                 "TELEMETRY_CONNECTION_STRING": "",
                 "TELEMETRY_TYPE": "Console"
             },

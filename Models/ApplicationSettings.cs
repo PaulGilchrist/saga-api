@@ -14,6 +14,7 @@ namespace API.Models {
         public string QueueType { get; }
         public string TelemetryConnectionString { get; }
         public string TelemetryType { get; }
+
         public ApplicationSettings() {
 #pragma warning disable CS8601
             AppEnvironment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"); // Development, QA, Staging, Production

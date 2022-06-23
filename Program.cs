@@ -9,20 +9,25 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.OData;
 using Microsoft.AspNetCore.OData.Batch;
-using Microsoft.AspNetCore.OData.Routing.Attributes;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.OpenApi.Models;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using Polly;
 using Polly.Extensions.Http;
-using Swashbuckle.AspNetCore.SwaggerGen;
 using Swashbuckle.AspNetCore.SwaggerUI;
 
-var builder = WebApplication.CreateBuilder(args);
-// Define some important OpenTelemetry constants and the activity source
+var contact = new OpenApiContact {
+    Name = "Paul Gilchrist",
+    Email = "paul.gilchrist@outlook.com",
+    Url = new Uri("https://github.com/PaulGilchrist")
+};
+var serviceDescription = "All Contact related business objects";     
 var serviceName = "Api.Contacts";
+var serviceTitle = "API Contacts";
 var serviceVersion = "1.0.0";
+
+var builder = WebApplication.CreateBuilder(args);
 var applicationSettings = new ApplicationSettings();
 builder.Services.AddSingleton<ApplicationSettings>();
 
@@ -161,17 +166,12 @@ if(app.Environment.IsDevelopment()) {
 }
 app.UseSwagger(options => {
     options.PreSerializeFilters.Add((swaggerDoc,httpReq) => {
-        var contact = new OpenApiContact {
-            Name = "Paul Gilchrist",
-            Email = "paul.gilchrist@outlook.com",
-            Url = new Uri("https://github.com/PaulGilchrist")
-        };
         swaggerDoc.Info.Contact = contact;
         swaggerDoc.Info.Contact.Email = contact.Email;
         swaggerDoc.Info.Contact.Url = contact.Url;
-        swaggerDoc.Info.Description = "All Contact related business objects";
-        swaggerDoc.Info.Title = "Contacts API";
-        swaggerDoc.Info.Version = "1.0.0";
+        swaggerDoc.Info.Description = serviceDescription;
+        swaggerDoc.Info.Title = serviceTitle;
+        swaggerDoc.Info.Version = serviceVersion;
         swaggerDoc.Servers = new List<OpenApiServer> { new OpenApiServer { Url = $"https://{httpReq.Host.Value}{applicationSettings.BasePath}" } };
     });
 });

@@ -1,7 +1,9 @@
 ﻿using System.Diagnostics;
 using API.Models;
 using API.Services;
+using Azure.Core;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OData.Abstracts;
 using Microsoft.AspNetCore.OData.Query;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
 using Newtonsoft.Json;
@@ -25,12 +27,13 @@ namespace API.Controllers {
 
         private readonly ContactService _contactService;
         private readonly IMessageService _messageService;
-
         private readonly string _queueName = "contacts";
 
         public ContactsController(IMessageService messageService, ContactService contactService) {
             _contactService = contactService;
             _messageService = messageService;
+            // Only send event if this change is not part of a $batch ChangeSet
+            // If part of a $batch ChangeSet, the ChangeSet handler will send all events when the entire ChangeSet completes successfully
         }
 
         #region CRUD Operations
@@ -112,8 +115,10 @@ namespace API.Controllers {
                 return StatusCode(500,ex.Message);
             }
             try {
-                _messageService.Send(_queueName, "created", newContact, typeof(Contact));
-                return Created("",newContact);
+               if(SendEvent(Request)) {
+                    _messageService.Send(_queueName, "created", newContact, typeof(Contact));
+               }
+               return Created("",newContact);
             } catch(Exception ex) {
                 // Compensation to rollback POST
                 await _contactService.Remove(newContact.Id);
@@ -156,51 +161,13 @@ namespace API.Controllers {
                 return StatusCode(500,ex.Message);
             }
             try {
-                _messageService.Send(_queueName, "updated", updatedContact, typeof(Contact));
+                if(SendEvent(Request)) {
+                  _messageService.Send(_queueName, "updated", updatedContact, typeof(Contact));
+                }
                 Activity.Current?.AddTag("value",updatedContact);
                 return NoContent();
             } catch(Exception ex) {
                 // Compensation to rollback PATCH
-                await _contactService.Update(id,foundContact);
-                Activity.Current?.AddTag("exception",ex);
-                return StatusCode(500,ex.Message);
-            }
-        }
-
-        /// <summary>Edit contact using full contact object</summary>
-        /// <param name="id">The contact id</param>
-        /// <param name="contact">A full contact object</param>
-        /// <response code="204">The contact was successfully updated</response>
-        /// <response code="400">The contact is invalid</response>
-        /// <response code="401">Authentication required</response>
-        /// <response code="403">Access denied due to inadaquate claim roles</response>
-        /// <response code="404">The contact was not found</response>
-        [HttpPut("contacts({id})")]
-        [Produces("application/json")]
-        [ProducesResponseType(typeof(void),204)] // No Content
-        [ProducesResponseType(typeof(string),400)] // Bad Request (should be ModelStateDictionary)
-        [ProducesResponseType(typeof(void),401)] // Unauthorized - Product not authenticated
-        [ProducesResponseType(typeof(ForbiddenException),403)] // Forbidden - Missing required claim roles
-        [ProducesResponseType(typeof(void),404)] // Not Found
-        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme + ",BasicAuthentication", Roles = "Admin")]
-        public async Task<IActionResult> Put([FromRoute] string id,[FromBody] Contact contact) {
-            Contact? foundContact = null;
-            try {
-                foundContact = await _contactService.Get(id);
-                if(foundContact == null) {
-                    return NotFound();
-                }
-                await _contactService.Update(id,contact);
-            } catch(Exception ex) {
-                Activity.Current?.AddTag("exception",ex);
-                return StatusCode(500,ex.Message);
-            }
-            try {
-                _messageService.Send(_queueName, "updated", contact, typeof(Contact));
-                Activity.Current?.AddTag("value",contact);
-                return NoContent();
-            } catch(Exception ex) {
-                // Compensation to rollback PUT
                 await _contactService.Update(id,foundContact);
                 Activity.Current?.AddTag("exception",ex);
                 return StatusCode(500,ex.Message);
@@ -219,7 +186,7 @@ namespace API.Controllers {
         [ProducesResponseType(typeof(void),401)] // Unauthorized
         [ProducesResponseType(typeof(ForbiddenException),403)] // Forbidden - Missing required claim roles
         [ProducesResponseType(typeof(void),404)] // Not Found
-        public async Task<IActionResult> DeleteById([FromRoute] string id) {
+        public async Task<IActionResult> Delete([FromRoute] string id) {
             Contact foundContact;
             try {
                 foundContact = await _contactService.Get(id);
@@ -232,7 +199,9 @@ namespace API.Controllers {
                 return StatusCode(500,ex.Message);
             }
             try {
-                _messageService.Send(_queueName, "deleted", id, typeof(string));
+                if(SendEvent(Request)) {
+                    _messageService.Send(_queueName, "deleted", id, typeof(string));
+                }
                 return NoContent();
             } catch(Exception ex) {
                 /* Database must allow passing of id with create or must wrap both delete and message send in transaction
@@ -264,5 +233,11 @@ namespace API.Controllers {
         }
 
         #endregion
+
+        public bool SendEvent(HttpRequest request) {
+            // Only send an event if this request is not part of a $batch ChangeSet
+            return ((ODataBatchFeature?)request.HttpContext.Features[typeof(IODataBatchFeature)])?.ChangeSetId == null;
+        }
+
     }
 }
