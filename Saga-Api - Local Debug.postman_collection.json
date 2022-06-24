@@ -1,0 +1,235 @@
+{
+	"info": {
+		"_postman_id": "5172a7cd-9be2-44fe-8435-59282c0f6300",
+		"name": "Saga-Api - Local Debug",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "1862505"
+	},
+	"item": [
+		{
+			"name": "K8s - Contacts",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.local.com/contacts/contacts",
+					"protocol": "https",
+					"host": [
+						"api",
+						"local",
+						"com"
+					],
+					"path": [
+						"contacts",
+						"contacts"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Debug - Contacts",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json;odata.metadata=minimal",
+						"type": "text"
+					},
+					{
+						"key": "Accept-Charset",
+						"value": "UTF-8",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://localhost:44830/contacts?$top=10",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "44830",
+					"path": [
+						"contacts"
+					],
+					"query": [
+						{
+							"key": "$top",
+							"value": "10"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Debug - $batch",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Cache-Control",
+						"type": "text",
+						"value": "no-cache"
+					},
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "multipart/mixed; boundary=batch_12045cb5-a06e-4d65-baeb-0f565c67967e"
+					},
+					{
+						"key": "Host",
+						"type": "text",
+						"value": "localhost:44830"
+					},
+					{
+						"key": "Connection",
+						"value": "Keep-Alive",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "multipart/mixed",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "--batch_12045cb5-a06e-4d65-baeb-0f565c67967e\r\nContent-Type: application/http\r\nContent-Transfer-Encoding: binary\r\n\r\nGET https://localhost:44830/contacts?$top=10 HTTP/1.1\r\nAccept: application/json;odata.metadata=minimal\r\nAccept-Charset: UTF-8\r\n\r\n--batch_12045cb5-a06e-4d65-baeb-0f565c67967e\r\nContent-Type: multipart/mixed;boundary=changeset_77162fcd-b8da-41ac-a9f8-9357efbbd\r\n\r\n--changeset_77162fcd-b8da-41ac-a9f8-9357efbbd \r\nContent-Type: application/http \r\nContent-Transfer-Encoding: binary \r\nContent-ID: 1\r\n\r\nPATCH https://localhost:44830/contacts('62ac8ddcf408e1defd5312e0') HTTP/1.1\r\nContent-Type: application/json\r\nAccept: application/json;odata.metadata=minimal\r\nAccept-Charset: UTF-8\r\n\r\n{ \"firstName\": \"Terry\" }\r\n\r\n--changeset_77162fcd-b8da-41ac-a9f8-9357efbbd \r\nContent-Type: application/http \r\nContent-Transfer-Encoding: binary \r\nContent-ID: 2\r\n\r\nPATCH https://localhost:44830/contacts('62ac8ddcf408e1defd5312e0') HTTP/1.1\r\nContent-Type: application/json\r\nAccept: application/json;odata.metadata=minimal\r\nAccept-Charset: UTF-8\r\n\r\n{ \"firstName\": \"Terry\" }\r\n\r\n--changeset_77162fcd-b8da-41ac-a9f8-9357efbbd--\r\n\r\n--batch_12045cb5-a06e-4d65-baeb-0f565c67967e\r\nContent-Type: application/http\r\nContent-Transfer-Encoding: binary\r\n\r\nGET https://localhost:44830/contacts('62ac8ddcf408e1defd5312e0') HTTP/1.1\r\nAccept: application/json;odata.metadata=minimal\r\nAccept-Charset: UTF-8\r\n\r\n--batch_12045cb5-a06e-4d65-baeb-0f565c67967e--\r\n"
+				},
+				"url": {
+					"raw": "https://localhost:44830/$batch",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "44830",
+					"path": [
+						"$batch"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Debug - Contact",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"firstName\": \"Terry\",\n    \"lastName\": \"Hoeger\",\n    \"displayName\": \"Terry Hoeger\",\n    \"addresses\": [\n        {\n            \"street\": \"13706 Kerluke Villages\",\n            \"city\": \"East Leta\",\n            \"state\": \"NY\",\n            \"zip\": \"28672\"\n        }\n    ],\n    \"emails\": [\n        {\n            \"email\": \"Terry.Hoeger@yahoo.com\"\n        }\n    ],\n    \"phones\": [\n        {\n            \"phoneNumber\": \"259.264.4361 x372\"\n        }\n    ]\n}"
+				},
+				"url": {
+					"raw": "https://localhost:44830/contacts",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "44830",
+					"path": [
+						"contacts"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Debug - Contact",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "https://localhost:44830/contacts('62ac8ddcf408e1defd5312e0')",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "44830",
+					"path": [
+						"contacts('62ac8ddcf408e1defd5312e0')"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Debug - Contact",
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"firstName\": \"Terry\"\n}"
+				},
+				"url": {
+					"raw": "https://localhost:44830/contacts('62ac8ddcf408e1defd5312e0')",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "44830",
+					"path": [
+						"contacts('62ac8ddcf408e1defd5312e0')"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Debug - Contacts By ID",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:44830/contacts('62ac8ddcf408e1defd5312e0')",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "44830",
+					"path": [
+						"contacts('62ac8ddcf408e1defd5312e0')"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

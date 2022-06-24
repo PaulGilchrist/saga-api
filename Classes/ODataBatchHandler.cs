@@ -16,7 +16,6 @@ namespace API.Classes {
             return ((ODataBatchFeature?)request.HttpContext.Features[typeof(IODataBatchFeature)])?.ChangeSetId;
         }
 
-
         public override async Task<IList<ODataBatchRequestItem>> ParseBatchRequestsAsync(HttpContext context) {
             var requests = await base.ParseBatchRequestsAsync(context);
             return requests.Select(rq => {
