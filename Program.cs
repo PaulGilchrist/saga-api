@@ -85,11 +85,11 @@ if(applicationSettings.OAuthAudience != null) {
 // Example showing support for multiple messaging platforms
 switch(applicationSettings.QueueType) {
     case "AzureServiceBus":
-        //builder.Services.AddScoped<IMessageService,MessageServiceAzureServiceBus>();
+        builder.Services.AddSingleton<IMessageService,MessageServiceAzureServiceBus>();
         healthCheckBuilder.AddAzureServiceBusTopic(applicationSettings.QueueConnectionString, "contacts", null, Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Unhealthy);
         break;
     case "AzureEventGrid":
-        //builder.Services.AddScoped<IMessageService,MessageServiceAzureEventGrid>();
+        builder.Services.AddSingleton<IMessageService,MessageServiceAzureEventGrid>();
         break;
     case "Dapr":
          builder.Services.AddSingleton<IMessageService,MessageServiceDapr>();
@@ -104,7 +104,7 @@ switch(applicationSettings.QueueType) {
         healthCheckBuilder.AddRabbitMQ(uri, null, null, Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Unhealthy);
         break;
     default: // None
-        //builder.Services.AddScoped<IMessageService,MessageServiceNone>();
+        builder.Services.AddSingleton<IMessageService,MessageServiceNone>();
         break;
 }
 healthCheckBuilder.AddMongoDb(applicationSettings.DatabaseConnectionString, applicationSettings.DatabaseName, null, Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Unhealthy);
@@ -123,7 +123,7 @@ builder.Services.AddSingleton<ContactService>();
 // Add OData including $batch
 builder.Services.AddControllers().AddOData((options, serviceProvider) => {
     var messageService = serviceProvider.GetService<IMessageService>();
-    var odataBatchHandler = new MyDefaultODataBatchHandler(messageService);
+    var odataBatchHandler = new MyODataBatchHandler(messageService);
     //var odataBatchHandler = new DefaultODataBatchHandler();
     odataBatchHandler.MessageQuotas.MaxOperationsPerChangeset = 5;
     odataBatchHandler.MessageQuotas.MaxNestingDepth = 2;

@@ -18,10 +18,10 @@ namespace API.Services {
             _httpClient = httpClient;
         }
 
-        public override void Send(string queueName, string type, object? jsonSerializableData, Type? dataSerializableType, bool delaySend = false) {
-            // Send message now or save the message to send later (delaySend)
-            if(delaySend) {
-                _eventMessages.Add(new EventMessage(queueName, type, jsonSerializableData, dataSerializableType));
+        public override void Send(string queueName, string type, object? jsonSerializableData, Type? dataSerializableType, Guid? changeSetId = null) {
+           if(changeSetId != null) {
+                // Do not send the message until the entire $batch ChangeSet has completed successfully
+                _eventMessages.Add(new EventMessage(changeSetId, queueName, type, jsonSerializableData, dataSerializableType));
             } else {
                 // queueName examples: contact, email, phone, address, etc.
                 var cloudEvent = new Azure.Messaging.CloudEvent("contacts-api", type, jsonSerializableData, dataSerializableType);

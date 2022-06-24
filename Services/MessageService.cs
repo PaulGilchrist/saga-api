@@ -19,23 +19,21 @@ namespace API.Services {
             _eventMessages = new List<EventMessage>();
         }
 
+        public void ClearDelayed(Guid? changeSetId) {
+            // Remove messages with the matching ChangeSetId
+            _eventMessages.RemoveAll(message => message.ChangeSetId == changeSetId);
+       }
+
         // Send message now or save the message to send later (delaySend)
-        public abstract void Send(string queueName, string type, object? jsonSerializableData, Type? dataSerializableType, bool delaySend = false);
+        public abstract void Send(string queueName, string type, object? jsonSerializableData, Type? dataSerializableType, Guid? changeSetId = null);
 
-        public void ClearDelayed() {
-            // Clear all delayed event messages
-            _eventMessages = new List<EventMessage>();
-        }
-
-        // Send all delayed event messages in FIFO order
-        //public abstract void SendDelayed();
-        public void SendDelayed() {
-            // Send all delayed event messages in FIFO order
+        public void SendDelayed(Guid? changeSetId) {
+            // Send delayed event messages with the matching ChangeSetId (send in FIFO order)
             try {
-                _eventMessages.ForEach(eventMessage => {
-                    Send(eventMessage.QueueName, eventMessage.Type, eventMessage.JsonSerializableData, eventMessage.DataSerializableType);
+                _eventMessages.FindAll(message => message.ChangeSetId == changeSetId).ForEach(message => {
+                    Send(message.QueueName, message.Type, message.JsonSerializableData, message.DataSerializableType, null);
                 });
-                ClearDelayed();
+                ClearDelayed(changeSetId);
             } catch(Exception ex) {
                 Activity.Current?.AddTag("exception",ex);
                 throw;

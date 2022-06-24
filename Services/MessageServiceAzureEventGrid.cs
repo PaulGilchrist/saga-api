@@ -15,9 +15,10 @@ namespace API.Services {
             _applicationSettings = applicationSettings;
         }
 
-        public override void Send(string queueName,string type,object? jsonSerializableData,Type? dataSerializableType, bool delaySend = false) {
-            if(delaySend) {
-                _eventMessages.Add(new EventMessage(queueName, type, jsonSerializableData, dataSerializableType));
+        public override void Send(string queueName,string type,object? jsonSerializableData,Type? dataSerializableType, Guid? changeSetId = null) {
+            if(changeSetId != null) {
+                // Do not send the message until the entire $batch ChangeSet has completed successfully
+                _eventMessages.Add(new EventMessage(changeSetId, queueName, type, jsonSerializableData, dataSerializableType));
             } else {
                 var client = new EventGridPublisherClient(
                     new Uri(queueName), // Store the full URL name not just the short topic name

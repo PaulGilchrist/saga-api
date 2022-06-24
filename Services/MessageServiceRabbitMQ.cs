@@ -25,9 +25,10 @@ namespace API.Services {
             // model.QueueDeclare("api", false, false, false, args);
         }
 
-        public override void Send(string queueName,string type,object? jsonSerializableData,Type? dataSerializableType, bool delaySend = false) {
-            if(delaySend) {
-                _eventMessages.Add(new EventMessage(queueName, type, jsonSerializableData, dataSerializableType));
+        public override void Send(string queueName,string type,object? jsonSerializableData,Type? dataSerializableType, Guid? changeSetId = null) {
+           if(changeSetId != null) {
+                // Do not send the message until the entire $batch ChangeSet has completed successfully
+                _eventMessages.Add(new EventMessage(changeSetId, queueName, type, jsonSerializableData, dataSerializableType));
             } else {
                 _channel.QueueDeclare(queue: queueName,durable: false,exclusive: false,autoDelete: false,arguments: null);
                 // type examples: created, updated, deleted, etc.
