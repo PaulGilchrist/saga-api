@@ -18,7 +18,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development",
         "BASE_PATH": "/",
         "CONTACTS_COLLECTION_NAME": "contacts",
-        "DATABASE_CONNECTION_STRING": "mongodb://admin:mongodb-k8s-demo@localhost:27017",
+        "DATABASE_CONNECTION_STRING": "mongodb://localhost:27017",
         "DATABASE_NAME": "mongotest",
         "OAUTH_AUDIENCE": "",
         "OAUTH_AUTHORITY": "",
