@@ -1,12 +1,5 @@
-﻿/*
- * Make sure Dapr is running before debugging this class
- * dapr run --app-id contacts-api --app-port 80 --dapr-http-port 3500 --components-path ./dapr-components/local
-*/
-using System.Diagnostics;
-using System.Text;
+﻿using System.Diagnostics;
 using API.Models;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 
 namespace API.Services {
     public abstract class MessageService: IMessageService {

@@ -1,10 +1,11 @@
 ﻿using System.Diagnostics;
+using System.Net;
+using System.Net.Http.Headers;
+using System.Text;
 using API.Classes;
 using API.Models;
 using API.Services;
-using Azure.Core;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.OData.Abstracts;
 using Microsoft.AspNetCore.OData.Query;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
 using Newtonsoft.Json;
@@ -46,12 +47,12 @@ namespace API.Controllers {
         /// <response code="403">Access denied due to inadaquate claim roles</response>
         [HttpGet("contacts")]
         [Produces("application/json")]
-        [ProducesResponseType(typeof(IEnumerable<Contact>),200)] // Ok
+        [ProducesResponseType(typeof(IAsyncEnumerable<Contact>),200)] // Ok
         [ProducesResponseType(typeof(void),401)] // Unauthorized
         [ProducesResponseType(typeof(ForbiddenException),403)] // Forbidden - Missing required claim roles
         //[Authorize]
         [EnableQuery]
-        public IActionResult Get() {
+        public async Task<IActionResult> Get() {
             try {
                 /*
                 Working = $count, $filter, $orderBy, $skip, $top
@@ -226,6 +227,40 @@ namespace API.Controllers {
                 return StatusCode(500,ex.Message);
             }
         }
+
+        ///// <summary>Export all contacts</summary>
+        ///// <returns>A file stream of all contacts</returns>
+        ///// <response code="200">The contacts were successfully retrieved</response>
+        ///// <response code="401">Authentication required</response>
+        ///// <response code="403">Access denied due to inadaquate claim roles</response>
+        //[HttpGet("export/contacts")]
+        //[Produces("application/json")]
+        //[ProducesResponseType(typeof(FileContentResult),200)] // Ok
+        //[ProducesResponseType(typeof(void),401)] // Unauthorized
+        //[ProducesResponseType(typeof(ForbiddenException),403)] // Forbidden - Missing required claim roles
+        ////[Authorize]
+        //public async Task<HttpResponse> GetFile() {
+        //    try {
+        //        Response.Headers.Add("Content-Type", new[] { "text/csv" });
+        //        Response.Headers.Add("Content-Disposition", new[] { "attachment; filename=contacts.csv" });
+        //        using (var streamWriter = new StreamWriter(Response.Body)) {
+        //            await streamWriter.WriteLineAsync($"FirstName,LastName");
+        //            foreach (var e in _contactService.Get()) {
+        //                await streamWriter.WriteLineAsync(
+        //                    $"{e.firstName}, {e.lastName}"
+        //                );
+        //                await streamWriter.FlushAsync();
+        //            }
+        //            await streamWriter.FlushAsync();
+        //        }
+        //        return Response;
+        //    } catch(Exception ex) {
+        //        Activity.Current?.AddTag("exception",ex);
+        //        Response.StatusCode = 500;
+        //        await Response.WriteAsync(ex.Message);
+        //        return Response;
+        //    }
+        //}
 
         #endregion
 

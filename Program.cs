@@ -43,7 +43,7 @@ builder.Services.AddOpenTelemetryTracing(b => {
     // .AddSqlClientInstrumentation()
     .AddHttpClientInstrumentation()
     .AddAspNetCoreInstrumentation();
-    switch(applicationSettings.QueueType) {
+    switch(applicationSettings.TelemetryType) {
         case "AppInsights":
             b.AddAzureMonitorTraceExporter(o => {
                 o.ConnectionString = applicationSettings.TelemetryConnectionString;
